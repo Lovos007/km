@@ -1,0 +1,467 @@
+/* Reseteo de estilos básicos */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 15px 20px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+header nav {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+header nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+header nav li:hover {
+    background-color: green;
+}
+
+/* Estilo básico del menú */
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    position: relative;
+    /* Importante para el posicionamiento del submenú */
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-align: left;
+}
+
+
+
+/* Submenús por defecto ocultos */
+nav ul li ul {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #0056b3;
+    padding: 10px;
+    list-style: none;
+    border-radius: 5px;
+}
+
+/* cambiar fondo li */
+
+
+
+/* Mostrar submenú cuando tiene la clase active */
+nav ul li ul.active {
+    display: block;
+}
+
+
+/* Ocultar submenús por defecto */
+nav ul.menu li ul {
+    display: none;
+    background-color: #0056b3;
+    padding: 5px;
+    border-radius: 5px;
+    margin-top: 1px;
+}
+
+/* Submenú desplegable activo */
+nav ul li ul.active {
+    display: block;
+}
+
+/* Submenú desplegable activo */
+nav ul.menu li.active>ul {
+    display: block;
+}
+
+
+
+nav ul.menu li ul li a {
+    color: white;
+    padding: 5px 10px;
+    display: block;
+}
+
+nav ul.menu li ul li a:hover {
+    background-color: green;
+}
+
+
+
+
+/* Estilo para el botón de menú (hamburguesa) */
+.menu-toggle {
+    display: none;
+    cursor: pointer;
+}
+
+.menu-toggle span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: #333;
+    margin: 5px auto;
+}
+
+/* Estilos para pantallas pequeñas */
+
+
+/* Responsividad */
+
+
+
+@media (max-width: 768px) {
+    nav ul.menu {
+        flex-direction: column;
+        /* Cambiar el layout a vertical en móviles */
+        display: none;
+        /* Ocultar el menú por defecto */
+    }
+
+    nav ul {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    nav ul li ul {
+        position: static;
+        box-shadow: none;
+        background-color: #007bff;
+    }
+
+    nav ul.menu.active {
+        display: flex;
+        /* Mostrar el menú cuando tiene la clase 'active' */
+    }
+
+    .menu-toggle {
+        display: block;
+        /* Mostrar el botón de menú (hamburguesa) */
+    }
+
+    /* Mostrar submenú en mobile cuando se hace clic en el elemento */
+
+
+    /* Mostrar submenú cuando el menú está activo */
+
+    nav ul.menu li ul {
+        display: block;
+
+    }
+}
+
+
+
+
+
+main {
+    flex: 1;
+    padding: 20px;
+    background-color: #fff;
+    margin: 20px auto;
+    max-width: 1200px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+}
+
+footer p {
+    margin: 5px 0;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    header nav {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    main {
+        margin: 10px;
+        padding: 15px;
+    }
+}
+
+
+/* USUARIOS */
+
+
+
+/* Contenedor principal */
+.content {
+    padding: 20px;
+}
+
+/* Contenedor específico para la tabla */
+.table-container {
+    overflow-x: auto;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+/* Estilos básicos de la tabla */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+    table-layout: auto;
+    /* Asegura que la tabla no se deforme */
+}
+
+th,
+td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+    white-space: nowrap;
+    /* Evita que el contenido se divida en varias líneas */
+}
+
+th {
+    background-color: #007BFF;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:hover {
+    background-color: #ddd;
+}
+
+.actions a {
+    display: inline-block;
+    padding: 5px;
+    margin-top: 5px;
+    text-align: center;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.actions a:hover {
+    background-color: green;
+    text-decoration: underline;
+}
+
+
+
+
+
+/* Responsividad: Hacer que la tabla sea deslizante en pantallas pequeñas */
+@media (max-width: 768px) {
+    table {
+        width: 100%;
+        table-layout: auto;
+        overflow-x: auto;
+        display: block;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    thead {
+        display: none;
+        /* Oculta los encabezados en móviles */
+    }
+
+    tbody tr {
+        display: block;
+        margin-bottom: 10px;
+        /* Espaciado entre las filas */
+        border-bottom: 1px solid #ddd;
+    }
+
+    td {
+        display: block;
+        text-align: left;
+        padding: 8px;
+        font-size: 14px;
+        border: none;
+        border-bottom: 1px solid #ddd;
+    }
+
+    td:before {
+        content: attr(data-label);
+        /* Muestra el encabezado como etiqueta */
+        font-weight: bold;
+        margin-right: 10px;
+    }
+
+    /* Opcional: ocultar la columna de "Estado" */
+    th:nth-child(5),
+    td:nth-child(5) {
+        display: none;
+    }
+
+    /* Mejorar la visualización de las acciones */
+    .actions a {
+        display: inline-block;
+        padding: 5px;
+        margin-top: 5px;
+        text-align: center;
+        background-color: #007BFF;
+        color: white;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+
+    /* Hover de las acciones */
+    .actions a:hover {
+        background-color: #0056b3;
+    }
+}
+
+
+/* formularios */
+
+.form-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+input:focus, select:focus, button:focus {
+    border-color: #007BFF;
+    outline: none;
+}
+
+button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+@media (max-width: 480px) {
+    .form-container {
+        padding: 15px;
+    }
+
+    input, select, button {
+        font-size: 12px;
+        padding: 8px;
+    }
+}
+
+
+
+
+/* clases generales */
+
+
+
+.enlace {
+    display: inline-block;
+    padding: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    text-align: center;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+
+}
+
+.enlace:hover {
+    background-color: green;
+    text-decoration: underline;
+}
+
+.h2-estandar {
+
+    overflow-x: auto;
+    margin-top: 0px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #007BFF;
+    color: white;
+    text-align: center;
+
+}
+
