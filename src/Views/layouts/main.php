@@ -53,7 +53,7 @@
         $nombre = $nombre -> getUsuario($_SESSION['user_id']);
         $nombreU = $nombre['nombre_apellido'] ?? 'Usuario no identificado';
         ?>
-         <p><?= htmlspecialchars($nombreU) ?></p>
+         <p><?= htmlspecialchars("Usuario: ".$nombreU) ?></p>
         <p>&copy; 2024 App km</p>
         <p>Cardaya Dev</p>
     </footer>
