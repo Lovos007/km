@@ -228,8 +228,8 @@ class usuarioController
             ];    
 
             $permiso = new PermisoController();
-            //PERMISO ID 4 EDITAR USUARIOS
-            $numero_permiso = 4;
+            //PERMISO ID 5 ACTIVAR Y DESACTIVAR USUARIOS
+            $numero_permiso = 5;
             $v_permiso = $permiso->getPermiso($_SESSION['user_id'], $numero_permiso, "Desactivo ".$nombre_usuario, 1);
             // SI NO TIENE PERMISO
     
@@ -274,8 +274,8 @@ class usuarioController
                 
             ];    
             $permiso = new PermisoController();
-            //PERMISO ID 4 EDITAR USUARIOS
-            $numero_permiso = 4;
+            //PERMISO ID 5 ACTIVAR Y DESACTIVAR USUARIOS
+            $numero_permiso = 5;
             $v_permiso = $permiso->getPermiso($_SESSION['user_id'], $numero_permiso, "Activo ".$nombre_usuario, 1);
             // SI NO TIENE PERMISO
     

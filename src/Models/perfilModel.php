@@ -4,20 +4,23 @@ namespace App\Models;
 
 use PDO;
 
-class perfilModel
+class perfilModel extends MainModel
 {
-    private $db;
+   // Constructor que recibe una conexión a la base de datos
+   
+   private $conexion;
+   
 
-    public function __construct(PDO $db)
-    {
-        $this->db = $db;
-    }
+   public function __construct($conexion)
+   {
+       $this->conexion = $conexion;
+   }    
 
 
     public function getPerfiles()
-    {
+    {       
         // Consulta para obtener todos los perfiles
-        $stmt = $this->db->prepare("
+        $stmt = $this->conexion->prepare("
             SELECT * 
             FROM perfiles
             ");
@@ -29,5 +32,7 @@ class perfilModel
         // Retorna los perfiles si existen, o un array vacío si no hay resultados
         return $perfiles ?: [];
     }
+
+    
 
 }

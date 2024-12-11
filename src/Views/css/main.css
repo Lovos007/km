@@ -455,6 +455,7 @@ button:hover {
 
 .h2-estandar {
 
+
     overflow-x: auto;
     margin-top: 0px;
     border: 1px solid #ddd;
@@ -464,4 +465,12 @@ button:hover {
     text-align: center;
 
 }
+.h2-estandar h2 {   
+    color: white;    
 
+}
+
+.actions .a-icono {
+    align-self: center;
+    background-color: white;
+}

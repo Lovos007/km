@@ -31,8 +31,8 @@
                 <a href="#">Configuraciones</a>
                 <ul>
                     <li><a href="<?= BASE_URL . 'usuario' ?>">Usuarios</a></li>
-                    <li><a href="<?= BASE_URL . 'perfiles' ?>">Perfiles</a></li>
-                    <li><a href="<?= BASE_URL . 'perfiles' ?>">Permisos</a></li>
+                    <li><a href="<?= BASE_URL . 'perfil' ?>">Perfiles</a></li>
+                    <li><a href="<?= BASE_URL . 'permiso' ?>">Permisos</a></li>
                 </ul>
             </li>
             <li><a href="<?= BASE_URL . 'logout' ?>">Cerrar sesión</a></li>

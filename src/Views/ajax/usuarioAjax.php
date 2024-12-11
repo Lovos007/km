@@ -30,6 +30,4 @@ if (isset($_GET['datos'])) {
 
 	echo php_alerta_redireccionar($user->modificarEstadoUsuario($id_user));
 
-
-
 }
