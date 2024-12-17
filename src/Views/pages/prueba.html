@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Vehículo</title>
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+    <style>/* styles.css */
+
+        /* Reset general */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        
+        /* Estilos del contenedor principal */
+        main {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Estilos para el formulario */
+        .form-container {
+            display: grid;
+            grid-template-columns: 1fr; /* Una columna por defecto */
+            gap: 15px;
+            padding: 20px;
+        }
+        
+        /* Estilos para los títulos */
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        /* Estilos para cada grupo de campo */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        /* Estilos de las etiquetas */
+        label {
+            font-weight: bold;
+            color: #555;
+        }
+        
+        /* Estilos de los inputs y select */
+        input, select, button {
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+        }
+        
+        input:focus, select:focus, button:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        
+        /* Estilos del botón */
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #0056b3;
+        }
+        
+        /* Media Query para pantallas grandes */
+        @media (min-width: 768px) {
+            .form-container {
+                grid-template-columns: repeat(auto); /* Dos columnas para pantallas grandes */
+            }
+        }
+        
+        /* Estilos para dispositivos móviles */
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 15px;
+            }
+        
+            input, select, button {
+                font-size: 12px;
+                padding: 8px;
+            }
+        }
+        </style>
+</head>
+<body>
+    <main>
+        <div class="form-container">
+            <form class="FormularioAjax" id="userForm" action="vehiculoAjax.php" method="POST">
+                <h2>Registrar vehículo</h2>
+                <input type="hidden" name="modulo_vehiculo" value="registrar">
+                
+                <div class="form-group">
+                    <label for="placa">Placa</label>
+                    <input type="text" id="placa" name="placa" placeholder="Ingresa la placa del vehículo" required>
+                </div>
+                <div class="form-group">
+                    <label for="marca">Marca</label>
+                    <input type="text" id="marca" name="marca" placeholder="Ingresa la marca del vehículo" required>
+                </div>
+                <div class="form-group">
+                    <label for="modelo">Modelo</label>
+                    <input type="text" id="modelo" name="modelo" placeholder="Ingresa el modelo del vehículo" required>
+                </div>
+                <div class="form-group">
+                    <label for="año">Año</label>
+                    <input type="number" id="año" name="año" min="1950" max="2050" step="1" placeholder="Ingresa el año del vehículo" required>
+                </div>
+                <div class="form-group">
+                    <label for="color">Color</label>
+                    <input type="text" id="color" name="color" placeholder="Ingresa el color del vehículo" required>
+                </div>
+                <div class="form-group">
+                    <label for="tipo_vehiculo">Tipo de vehículo</label>
+                    <select id="tipo_vehiculo" name="tipo_vehiculo">
+                        <option value="">Selecciona el tipo</option>
+                        <option value="camion">Camión</option>
+                        <option value="auto">Auto</option>
+                        <option value="moto">Moto</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="capacidad_carga">Capacidad de carga</label>
+                    <input type="text" id="capacidad_carga" name="capacidad_carga" placeholder="Ingresa la capacidad de carga">
+                </div>
+
+                <div class="form-group">
+                    <button type="submit">Registrar</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

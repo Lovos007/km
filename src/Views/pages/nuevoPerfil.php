@@ -1,6 +1,6 @@
 
 
-<div class="form-container">
+<div class="form-container-mini">
     <form class="FormularioAjax" id="userForm" action="<?= BASE_URL . 'src/Views/ajax/perfilAjax.php' ?>" method="POST">
         <h2>Registrar Perfil</h2>
         <input type="hidden" name="modulo_perfil" value="registrar">

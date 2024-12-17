@@ -22,7 +22,7 @@ use App\Controllers\usuarioController;
 
 
 
-<div class="form-container">
+<div class="form-container-mini">
     <form class="FormularioAjax" id="userForm" action="<?= BASE_URL . 'src/Views/ajax/usuarioAjax.php' ?>" method="POST">
         <h2>Editar Usuario</h2>
 

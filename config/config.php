@@ -1,5 +1,6 @@
 <?php
 use App\Controllers\perfilController;
+use App\Controllers\VehiculoController;
 
 
 define('BASE_URL', 'http://localhost/km/');
@@ -72,6 +73,7 @@ function selectPerfiles($name, $vista, $perfil_id = 0)
 
     $perfiles = new perfilController();
     $lista = $perfiles->getPerfiles();
+    $seleccionado="";
     if ($perfil_id > 0) {
         $default = "";
     } else {
@@ -92,7 +94,39 @@ function selectPerfiles($name, $vista, $perfil_id = 0)
                 $seleccionado = "";
             }
         }
-        echo "<option value='{$perfil['perfil_id']}' $seleccionado>{$perfil['nombre_perfil']} </option>";
+        echo "<option value='{$perfil['perfil_id']}' $seleccionado >{$perfil['nombre_perfil']} </option>";
+    }
+    echo '</select>';
+
+}
+//lista desplegable de perfiles activos
+function selectTipoVehiculo($name, $vista, $tipo_vehiculo_id = 0)
+{
+
+    $perfiles = new VehiculoController();
+    $lista = $perfiles->getTipoVehiculo();
+    $seleccionado="";
+    if ($tipo_vehiculo_id > 0) {
+        $default = "";
+    } else {
+        $default = "selected";
+    }
+
+    echo " <label for='$name'>$vista</label>
+            <select id='$name' name='$name' >
+                <option value='' disabled $default>Selecciona </option>
+                ";
+    foreach ($lista as $tipo) {
+        if ($tipo_vehiculo_id > 0) {
+            if ($tipo_vehiculo_id == $tipo['tipo_vehiculo_id']) {
+
+                $seleccionado = "selected";
+
+            } else {
+                $seleccionado = "";
+            }
+        }
+        echo "<option value='{$tipo['tipo_vehiculo_id']}' $seleccionado >{$tipo['tipo']} </option>";
     }
     echo '</select>';
 

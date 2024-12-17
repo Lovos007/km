@@ -22,7 +22,9 @@ class MainModel
         $valores = ":" . implode(", :", array_keys($datos)); // Construye los placeholders
 
         $sql = "INSERT INTO $tabla ($columnas) VALUES ($valores)";
+        
         $stmt = $this->conexion->prepare($sql); // Prepara la consulta
+        ;
 
         try {
             $stmt->execute($datos); // Ejecuta la consulta con los datos

@@ -21,7 +21,7 @@
             <li>
                 <a href="#">Mantenimiento</a>
                 <ul>
-                    <li><a href="<?= BASE_URL . 'vechiculos' ?>">Vechiculos</a></li>
+                    <li><a href="<?= BASE_URL . 'vehiculos' ?>">Vehiculos</a></li>
                     <li><a href="<?= BASE_URL . 'conductores' ?>">Conductores</a></li>
                     <li><a href="<?= BASE_URL . 'auxiliares' ?>">Auxiliares</a></li>
                     <li><a href="<?= BASE_URL . 'responsables' ?>">Responsables</a></li>
@@ -54,7 +54,7 @@
         $nombreU = $nombre['nombre_apellido'] ?? 'Usuario no identificado';
         ?>
          <p><?= htmlspecialchars("Usuario: ".$nombreU) ?></p>
-        <p>&copy; 2024 App km</p>
+        <p>&copy; 2025 App km</p>
         <p>Cardaya Dev</p>
     </footer>
 </body>

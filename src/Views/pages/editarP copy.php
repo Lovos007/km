@@ -2,19 +2,19 @@
 use App\Controllers\PermisoController;
 use App\Controllers\perfilController;
 
-// Obtener el término de búsqueda desde la URL o input
-$perfil_id = isset($_GET["datos"]) ? base64_decode($_GET["datos"]) : '';
-$query = isset($_GET['query']) ? strtolower($_GET['query']) : '';
+// Obtener el término de búsqueda desde la URL
+if (isset($_GET['datos'])) {
 
-// Controladores y datos iniciales
-$perfiles = new perfilController();
-$perfil = $perfiles->getPerfil($perfil_id);
-$lista = $perfiles->mostrarPermisosPerfil($perfil_id);
+    $perfil_id = base64_decode($_GET["datos"]);
+    $perfiles = new perfilController();
+    $perfil = $perfiles->getPerfil($perfil_id);
 
-// Filtrar resultados según la búsqueda si el input no está vacío
-$lista=$perfiles->obtenerPermisos($perfil_id,$query);
+    $lista = $perfiles->mostrarPermisosPerfil($perfil_id);
 
-$nombre_perfil = $perfil[0]['nombre_perfil'];
+
+    $nombre_perfil = $perfil[0]['nombre_perfil'];
+}
+
 ?>
 
 <div class="table-container">
@@ -36,32 +36,23 @@ $nombre_perfil = $perfil[0]['nombre_perfil'];
         <h3>PERMISOS DEL PERFIL</h3>
     </div>
 
-    <!-- Buscador Dinámico -->
-    <div class="form-group">
-        <input 
-            type="text" 
-            id="buscador" 
-            placeholder="Digita el nombre o numero de permiso" 
-            autocomplete="off"
-            style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px;"
-        />
-    </div>
 
     <table id="userTable">
         <thead>
             <tr>
                 <th>Numero de permiso</th>
                 <th>Permiso</th>
-                <th>Activar/desactivar</th>
+                <th>Activor/desactivar</th>
             </tr>
         </thead>
 
-        <tbody id="resultados">
+        <tbody>
             <?php foreach ($lista as $perfil): ?>
                 <tr>
                     <td data-label="Numero de permiso" style="text-align: center;">
                         <?= htmlspecialchars($perfil['permiso_id'], ENT_QUOTES, 'UTF-8') ?>
                     </td>
+
 
                     <td data-label="Permiso" title="<?= $perfil['descripcion'] ?>">
                         <?= htmlspecialchars($perfil['permiso'], ENT_QUOTES, 'UTF-8') ?>
@@ -79,18 +70,3 @@ $nombre_perfil = $perfil[0]['nombre_perfil'];
         </tbody>
     </table>
 </div>
-
-
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        iniciarBuscador(
-            'buscador', 
-            'resultados', 
-            '', 
-            ''
-            
-        );
-    });
-</script>
-

@@ -103,8 +103,6 @@ class perfilController
 
         return json_encode($alerta); // Retornar alerta en formato JSON
 
-
-
     }
 
     public function modificarPerfil()
@@ -251,6 +249,23 @@ class perfilController
         return json_encode($alerta); // Retornar alerta en formato JSON
 
 
+    }
+
+      // Método genérico para obtener y filtrar permisos
+      public function obtenerPermisos($perfil_id, $query = '') {
+        $lista = $this->mostrarPermisosPerfil($perfil_id);
+
+        if (!empty($query)) {
+            $query = strtolower($query);
+            $lista = array_filter($lista, function ($item) use ($query) {
+                return strpos(strtolower($item['permiso']), $query) !== false ||
+                       strpos(strtolower($item['descripcion']), $query) !== false ||
+                       strpos(strtolower($item['permiso_id']), $query) !== false;
+            });
+        }
+        
+
+        return $lista;
     }
 
 
