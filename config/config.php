@@ -1,4 +1,5 @@
 <?php
+use App\Controllers\MainController;
 use App\Controllers\perfilController;
 use App\Controllers\VehiculoController;
 
@@ -81,7 +82,7 @@ function selectPerfiles($name, $vista, $perfil_id = 0)
     }
 
     echo " <label for='$name'>$vista</label>
-            <select id='$name' name='$name' >
+            <select id='$name' name='$name'  required>
                 <option value='' disabled $default>Selecciona </option>
                 ";
     foreach ($lista as $perfil) {
@@ -99,12 +100,12 @@ function selectPerfiles($name, $vista, $perfil_id = 0)
     echo '</select>';
 
 }
-//lista desplegable de perfiles activos
+//lista desplegable de vehiculo activos
 function selectTipoVehiculo($name, $vista, $tipo_vehiculo_id = 0)
 {
 
-    $perfiles = new VehiculoController();
-    $lista = $perfiles->getTipoVehiculo();
+    $tipos = new VehiculoController();
+    $lista = $tipos->getTipoVehiculo();
     $seleccionado="";
     if ($tipo_vehiculo_id > 0) {
         $default = "";
@@ -127,6 +128,40 @@ function selectTipoVehiculo($name, $vista, $tipo_vehiculo_id = 0)
             }
         }
         echo "<option value='{$tipo['tipo_vehiculo_id']}' $seleccionado >{$tipo['tipo']} </option>";
+    }
+    echo '</select>';
+
+}
+
+
+//lista desplegable de perfiles activos
+function selectEmpresas($name, $vista, $nombre_empresa = "")
+{
+
+    $empresas = new MainController();
+    $lista = $empresas->getEmpresas();
+    $seleccionado="";
+    if ($nombre_empresa !="" ) {
+        $default = "";
+    } else {
+        $default = "selected";
+    }
+
+    echo " <label for='$name'>$vista</label>
+            <select id='$name' name='$name' required >
+                <option value='' disabled $default>Selecciona </option>
+                ";
+    foreach ($lista as $empresa) {
+        if ($nombre_empresa !="" ) {
+            if ($nombre_empresa == $empresa['nombre_empresa']) {
+
+                $seleccionado = "selected";
+
+            } else {
+                $seleccionado = "";
+            }
+        }
+        echo "<option value='{$empresa['nombre_empresa']}' $seleccionado >{$empresa['nombre_empresa']} </option>";
     }
     echo '</select>';
 

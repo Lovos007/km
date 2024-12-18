@@ -9,25 +9,25 @@ use App\Controllers\VehiculoController;
 
 if (isset($_POST['modulo_vehiculo'])) {
 
-	$vechiculo = new VehiculoController();
+	$vehiculo = new VehiculoController();
 
 
 	if($_POST['modulo_vehiculo']=="registrar"){
-		echo $vechiculo->crearVehiculo();
+		echo $vehiculo->crearVehiculo();
 	}
 
-	// if($_POST['modulo_usuario']=="editar"){
-	// 	echo $user->editarUsuario();
+	if($_POST['modulo_vehiculo']=="modificar"){
+		echo $vehiculo->modificarVehiculo();
 
-	// }
+	}
 
 }
 
-// if (isset($_GET['datos'])) {
+if (isset($_GET['datos'])) {
 
-// 	$id_user =base64_decode($_GET["datos"]);
-// 	$user = new usuarioController();
+	$id_vehiculo =base64_decode($_GET["datos"]);
+	$vehiculo = new VehiculoController();
 
-// 	echo php_alerta_redireccionar($user->modificarEstadoUsuario($id_user));
+	echo php_alerta_redireccionar($vehiculo->modificarEstadoVehiculo($id_vehiculo));
 
-// }
+}

@@ -50,7 +50,7 @@
         <?php 
         use App\Controllers\usuarioController;
         $nombre = new usuarioController() ;
-        $nombre = $nombre -> getUsuario($_SESSION['user_id']);
+        $nombre = $nombre -> getUsuario ($_SESSION['user_id']);
         $nombreU = $nombre['nombre_apellido'] ?? 'Usuario no identificado';
         ?>
          <p><?= htmlspecialchars("Usuario: ".$nombreU) ?></p>

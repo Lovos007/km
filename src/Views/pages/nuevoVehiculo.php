@@ -25,6 +25,9 @@
             <input type="text" id="color" name="color" placeholder="color del vehiculo" required >
         </div>
         <div class="form-group">
+          <?= selectEmpresas("empresa","Empresa")?>
+        </div>
+        <div class="form-group">
           <?= selectTipoVehiculo("tipo_vehiculo","Tipo de vehiculo")?>
         </div>
         <div class="form-group">

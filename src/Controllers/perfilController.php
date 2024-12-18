@@ -85,13 +85,10 @@ class perfilController
             return json_encode($alerta); // Terminar ejecución con alerta de error
 
         }
-
-
         $resultado = $this->MainModel->agregarPerfil($nombre_perfil, $usuario_id, $estado);
 
         // Verificar si la inserción fue exitosa
         if ($resultado != '') {
-
             $alerta = [
                 "tipo" => "simpleRedireccion",
                 "titulo" => "Perfil registrado",
@@ -100,14 +97,11 @@ class perfilController
                 "url" => BASE_URL . 'perfil'
             ];
         }
-
         return json_encode($alerta); // Retornar alerta en formato JSON
-
     }
 
     public function modificarPerfil()
     {
-
         // Validar que todos los campos requeridos estén presentes
         if (empty($_POST['nombre_perfil']) || empty($_POST['perfil_id'])) {
             $alerta = [
@@ -136,18 +130,13 @@ class perfilController
                 "icono" => "error"
             ];
             return json_encode($alerta); // Terminar ejecución con alerta de error
-
         }
 
         $datos= ['nombre_perfil' => $nombre_perfil];
         $filtro= ['perfil_id' => $perfil_id];
-
-
         $resultado = $this->MainModel->actualizar('perfiles',$datos,$filtro);
-
         // Verificar si la inserción fue exitosa
         if ($resultado != '') {
-
             $alerta = [
                 "tipo" => "simpleRedireccion",
                 "titulo" => "Perfil modificado",
@@ -167,39 +156,25 @@ class perfilController
         
     }
 
-    public function modificarEstadoPermiso(){
-        
+    public function modificarEstadoPermiso(){       
 
         $perfil_id =base64_decode($_GET["dato1"]);
-	    $permiso_id =base64_decode($_GET["dato2"]);
-
-        
+	    $permiso_id =base64_decode($_GET["dato2"]);       
 
         $datos= [
             'perfil_id'=>$perfil_id,
             'permiso_id'=>$permiso_id
         ];
-
         $perfil = $this->MainModel->consultar('perfiles_permisos',$datos);
-
-
-
         $estado = $perfil[0]['estado'];
-        
-
-        
-         
-         $tabla='perfiles_permisos';
-         
+         $tabla='perfiles_permisos';         
          $filtro = ['perfil_id' => $perfil_id,'permiso_id'=>$permiso_id];
 
          if ($estado > 0) {
             $datos = [
                 'estado' => 0
                 
-            ];    
-
-           
+            ];              
 
             $resultado = $this->MainModel->actualizar($tabla,$datos,$filtro);
             if ($resultado>0){
@@ -216,17 +191,13 @@ class perfilController
                     "icono" => "error",
                     "url" => BASE_URL . 'editarP?datos='. base64_encode($perfil_id)
                 ];
-            }
-
-
-           
+            }           
         } else {
             $datos = [
                 'estado' => 1,
                 'usuario_u' => usuario_session()
                 
-            ];    
-            
+            ];               
 
             $resultado = $this->MainModel->actualizar($tabla,$datos,$filtro);
             if ($resultado>0){
@@ -234,7 +205,6 @@ class perfilController
                     "tipo" => "redireccionar",
                     "url" => BASE_URL . 'editarP?datos='. base64_encode($perfil_id)
                 ];
-
             }else{
                 $alerta = [
                     "tipo" => "simpleRedireccion",
@@ -247,7 +217,6 @@ class perfilController
 
         }
         return json_encode($alerta); // Retornar alerta en formato JSON
-
 
     }
 

@@ -396,6 +396,10 @@ tr:hover {
     gap: 15px;
     padding: 20px;
 }
+.form-container p {
+    font-weight: bold;
+    color: blue;
+}
 
 h2 {
     text-align: center;
