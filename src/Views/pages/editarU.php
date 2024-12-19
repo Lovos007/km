@@ -14,8 +14,7 @@ use App\Controllers\usuarioController;
     
     $nombre_usuario =$usuario["nombre_usuario"];
     $nombre_apellido = $usuario["nombre_apellido"];
-    $perfil=$usuario["perfil_id"];
-    
+    $perfil=$usuario["perfil_id"];   
     
         
     ?>

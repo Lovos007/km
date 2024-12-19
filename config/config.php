@@ -2,6 +2,7 @@
 use App\Controllers\MainController;
 use App\Controllers\perfilController;
 use App\Controllers\VehiculoController;
+use App\Controllers\ConductoresController;
 
 
 define('BASE_URL', 'http://localhost/km/');
@@ -164,6 +165,48 @@ function selectEmpresas($name, $vista, $nombre_empresa = "")
         echo "<option value='{$empresa['nombre_empresa']}' $seleccionado >{$empresa['nombre_empresa']} </option>";
     }
     echo '</select>';
+
+}
+function selectTipoLicencia($name, $vista, $tipo_licencia_id =0)
+{
+
+    $licencias = new ConductoresController();
+    $lista = $licencias->getTipoLicencia();
+    $seleccionado="";
+    if ($tipo_licencia_id >0 ) {
+        $default = "";
+    } else {
+        $default = "selected";
+    }
+
+    echo " <label for='$name'>$vista</label>
+            <select id='$name' name='$name' >
+                <option value='0'  $default>Selecciona </option>
+                ";
+    foreach ($lista as $licencia) {
+        if ($tipo_licencia_id>0 ) {
+            if ($tipo_licencia_id == $licencia['tipo_licencia_id']) {
+
+                $seleccionado = "selected";
+
+            } else {
+                $seleccionado = "";
+            }
+        }
+        echo "<option value='{$licencia['tipo_licencia_id']}' $seleccionado >{$licencia['tipo_licencia']} </option>";
+    }
+    echo '</select>';
+
+}
+
+function obtenerTipoLicencia($id_tipo_licencia){
+    if ($id_tipo_licencia==0) {
+        return "";
+    }
+    
+    $licencia = new ConductoresController();
+    $resultado = $licencia->getTipoLicencia($id_tipo_licencia);
+    return $resultado[0]['tipo_licencia'];
 
 }
 

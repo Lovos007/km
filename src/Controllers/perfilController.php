@@ -67,7 +67,8 @@ class perfilController
             return json_encode($alerta); // Terminar ejecución con alerta de error
         }
 
-        $nombre_perfil = $_POST['nombre_perfil'];
+        $nombre_perfil = $this->MainModel->limpiarCadena($_POST['nombre_perfil']);
+        
         $usuario_id = usuario_session();
         $estado = 0;
 
@@ -133,6 +134,7 @@ class perfilController
         }
 
         $datos= ['nombre_perfil' => $nombre_perfil];
+        $datos = $this->MainModel->limpiarArray($datos);
         $filtro= ['perfil_id' => $perfil_id];
         $resultado = $this->MainModel->actualizar('perfiles',$datos,$filtro);
         // Verificar si la inserción fue exitosa

@@ -24,6 +24,7 @@ class usuarioController
 
     public function getUsuario($id)
     {
+        $id = $this->MainModel->limpiarCadena($id);
         $usuario = $this->userModel->getUsuario($id);
 
         // Si se encontró el usuario, lo devuelve, de lo contrario, retorna un array vacío.
@@ -32,6 +33,7 @@ class usuarioController
 
     public function getUsuarios($search)
     {
+        $search = $this->MainModel->limpiarCadena($search);
         $usuarios = $this->userModel->getUsuarios($search);
 
         // Si se encontró el usuario, lo devuelve, de lo contrario, retorna un array vacío.
@@ -105,6 +107,8 @@ class usuarioController
 
         ];
 
+        $datos = $this->MainModel->limpiarArray($datos);
+
         // Especificar la tabla
         $tabla = 'usuarios';
 
@@ -165,6 +169,7 @@ class usuarioController
             'usuario_u' => usuario_session()
 
         ];
+        $datos = $this->MainModel->limpiarArray($datos);
 
         $filtro = ['usuario_id' => $usuario_id];
 

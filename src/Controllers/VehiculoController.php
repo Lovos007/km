@@ -26,10 +26,16 @@ final class VehiculoController
         } else {
             $datos =
                 [
-                    'placa' => '%' . $search . '%'
+                    'placa' => '%' . $search . '%',
+                    'marca' => '%' . $search . '%',
+                    'modelo' => '%' . $search . '%',
+                    'color' => '%' . $search . '%',
+                    'anio' => '%' . $search . '%',
+                    'empresa' => '%' . $search . '%'
                 ];
+                $datos = $this->MainModel->limpiarArray($datos);
 
-            $vechiculos = $this->MainModel->consultar('vehiculos', $datos);
+            $vechiculos = $this->MainModel->consultar('vehiculos', $datos," OR ");
             return $vechiculos ? $vechiculos : [];
 
         }
@@ -53,6 +59,7 @@ final class VehiculoController
                 [
                     'tipo' => '%' . $search . '%'
                 ];
+                $datos = $this->MainModel->limpiarArray($datos);
 
             $vechiculos = $this->MainModel->consultar('tipo_vehiculos', $datos);
             return $vechiculos ? $vechiculos : [];
@@ -126,6 +133,7 @@ final class VehiculoController
             'targeta_vence' => $targeta_vence,
             'usuario_c' => $usuario_c
         ];
+        $datos = $this->MainModel->limpiarArray($datos);
     
         // Insertar en la base de datos
         $resultado = $this->MainModel->insertar("vehiculos", $datos);
@@ -164,7 +172,8 @@ final class VehiculoController
             $datos = [
                 'estado' => 0,
                 'usuario_u' => usuario_session()                
-            ];               
+            ];     
+            $datos = $this->MainModel->limpiarArray($datos);          
 
             $resultado = $this->MainModel->actualizar($tabla,$datos,$filtro);
             if ($resultado>0){
@@ -191,7 +200,7 @@ final class VehiculoController
                 'estado' => 1,
                 'usuario_u' => usuario_session()               
             ];    
-         
+            $datos = $this->MainModel->limpiarArray($datos);
 
             $resultado = $this->MainModel->actualizar($tabla,$datos,$filtro);
             if ($resultado>0){
@@ -264,6 +273,8 @@ final class VehiculoController
             'targeta_vence' => $targeta_vence,
             'usuario_u' => $usuario_c
         ];
+
+        $datos = $this->MainModel->limpiarArray($datos);
 
         $filtro= ['vehiculo_id' => $vehiculo_id];
         $resultado = $this->MainModel->actualizar('vehiculos',$datos,$filtro);

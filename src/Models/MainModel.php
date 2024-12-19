@@ -14,6 +14,42 @@ class MainModel
         $this->conexion = $conexion;
     }
 
+   
+   public  function limpiarCadena($cadena)
+   {
+       // 1. Eliminar etiquetas HTML y PHP
+       $cadena = strip_tags($cadena);
+
+       // 2. Convertir caracteres especiales a entidades HTML para evitar XSS
+       $cadena = htmlspecialchars($cadena, ENT_QUOTES, 'UTF-8');
+
+       // 3. Eliminar espacios en blanco adicionales
+       $cadena = trim($cadena);
+
+       // 4. Opcional: eliminar caracteres no imprimibles
+       $cadena = preg_replace('/[\x00-\x1F\x7F]/u', '', $cadena);
+
+       return $cadena;
+   }
+
+   /**
+    * Limpia un array de cadenas recursivamente.
+    *
+    * @param array $array El array a limpiar.
+    * @return array El array sanitizado.
+    */
+   public  function limpiarArray(array $array)
+   {
+       foreach ($array as $key => $value) {
+           if (is_array($value)) {
+               $array[$key] = self::limpiarArray($value); // Llamada recursiva
+           } else {
+               $array[$key] = self::limpiarCadena($value);
+           }
+       }
+       return $array;
+   }
+
     // Método para insertar datos
 
     public function insertar($tabla, $datos)
@@ -81,11 +117,11 @@ class MainModel
 
    
    // Método para consultar datos con soporte para LIKE
-public function consultar($tabla, $condiciones = [])
+public function consultar($tabla, $condiciones = [], $condicional = " AND ")
 {
     $condicionesString = "";
     if (!empty($condiciones)) {
-        $condicionesString = "WHERE " . implode(" AND ", array_map(function($columna, $valor) {
+        $condicionesString = "WHERE " . implode($condicional, array_map(function($columna, $valor) {
             // Usa LIKE si el valor contiene un comodín (%)
             return strpos($valor, '%') !== false ? "$columna LIKE :$columna" : "$columna = :$columna";
         }, array_keys($condiciones), $condiciones));

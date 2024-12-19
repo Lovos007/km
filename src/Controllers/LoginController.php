@@ -4,11 +4,13 @@ namespace App\Controllers;
 
 use App\Models\Database;
 use App\Models\User;
+use App\Models\MainModel;
 use App\Views\View;
 
 class LoginController
 {
     private $userModel;
+    private $MainModel;
 
     public function __construct()
     {
@@ -17,6 +19,7 @@ class LoginController
         
         // Pasar la conexión al modelo User
         $this->userModel = new User($db);
+        $this->MainModel = new MainModel($db);
     }
 
     public function cifrarPass($password){
@@ -34,8 +37,11 @@ class LoginController
     public function authenticate()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+           
             $username = $_POST['username'] ?? '';
             $password = $_POST['password'] ?? '';
+            $username=  $this->MainModel->limpiarCadena($username);
+            $password=  $this->MainModel->limpiarCadena($password);
 
             // Validación básica de los campos de entrada
             if (empty($username) || empty($password)) {
