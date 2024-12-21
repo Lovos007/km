@@ -9,12 +9,18 @@ $query = isset($_GET['query']) ? strtolower($_GET['query']) : '';
 // Controladores y datos iniciales
 $perfiles = new perfilController();
 $perfil = $perfiles->getPerfil($perfil_id);
+
+// Obtener todos los permisos inicialmente
 $lista = $perfiles->mostrarPermisosPerfil($perfil_id);
 
-// Filtrar resultados según la búsqueda si el input no está vacío
-$lista=$perfiles->obtenerPermisos($perfil_id,$query);
+// Filtrar resultados solo si el input no está vacío
+if (!empty($query)) {
+    $lista = $perfiles->obtenerPermisos($perfil_id, $query);
+}
 
+// Obtener nombre del perfil
 $nombre_perfil = $perfil[0]['nombre_perfil'];
+
 ?>
 
 <div class="table-container">
@@ -87,7 +93,7 @@ $nombre_perfil = $perfil[0]['nombre_perfil'];
         iniciarBuscador(
             'buscador', 
             'resultados', 
-            '', 
+            '<?= BASE_URL . 'editarP?datos=' . base64_encode($perfil_id) ?>', 
             ''
             
         );

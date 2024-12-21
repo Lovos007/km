@@ -75,7 +75,7 @@ use App\Controllers\ConductoresController;
 
 <?php else: ?>
 
-<h2>conductor$conductor no encontrado</h2>
+<h2>Conductor no encontrado</h2>
 
 <?php endif; ?>
 

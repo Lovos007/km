@@ -225,6 +225,7 @@ class perfilController
       // Método genérico para obtener y filtrar permisos
       public function obtenerPermisos($perfil_id, $query = '') {
         $lista = $this->mostrarPermisosPerfil($perfil_id);
+        
 
         if (!empty($query)) {
             $query = strtolower($query);

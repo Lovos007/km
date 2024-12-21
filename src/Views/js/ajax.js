@@ -142,6 +142,8 @@ function iniciarBuscador(buscadorId, resultadosId, baseUrl, params) {
             ? `${baseUrl}?${params}&query=${encodeURIComponent(query)}`
             : `${baseUrl}?${params}`;
 
+            //console.log(url);
+
         fetch(url, { method: 'GET' })
             .then(response => response.text())
             .then(html => {

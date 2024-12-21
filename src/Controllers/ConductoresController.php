@@ -274,7 +274,7 @@ final class ConductoresController
        $empresa = $_POST['empresa'];
        $numero_contacto = $_POST['numero'] ?? null;
        $correo = $_POST['correo'] ?? null;
-       $usuario_c = usuario_session();
+       $usuario_u = usuario_session();
        $estado = 1;
 
    
@@ -290,7 +290,7 @@ final class ConductoresController
            'numero_contacto' => $numero_contacto,
            'correo' => $correo,
            'estado' => $estado,
-           'usuario_c' => $usuario_c
+           'usuario_u' => $usuario_u
        ];
        $datos = $this->MainModel->limpiarArray($datos);
         $filtro= ['conductor_id' => $conductor_id];

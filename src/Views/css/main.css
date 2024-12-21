@@ -376,6 +376,10 @@ tr:hover {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
+.form-container-mini .form-group-submit{
+    margin-top: 15px;
+}
+
 @media (max-width: 480px) {
     .form-container-mini {
         padding: 15px;
@@ -454,6 +458,7 @@ button:hover {
     }
 
     .form-group-submit {
+
         margin: 0 30%;
         
         grid-column-start: 1;

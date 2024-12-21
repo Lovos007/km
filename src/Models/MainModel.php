@@ -187,9 +187,9 @@ public function mostrarPermisosPerfil($perfil_id)
     $sql = "
         SELECT 
             perfiles.nombre_perfil,
-            permisos.permiso_id,
-            permisos.permiso,
-            permisos.descripcion, 
+            permisos.permiso_id as permiso_id,
+            permisos.permiso as permiso,
+            permisos.descripcion as descripcion, 
             perfiles_permisos.estado
         FROM 
             perfiles_permisos
