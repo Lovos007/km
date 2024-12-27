@@ -23,7 +23,8 @@ class HomeController
     {
         // Datos que quieres pasar a la vista
         $data = [
-            'fecha_actual' => date('Y-m-d H:i:s')
+            'fecha_actual_larga' => date('Y-m-d H:i:s'),
+            'fecha_actual_corta' => date('Y-m-d')
         ];
 
         // Renderizar la vista

@@ -40,8 +40,7 @@ class LoginController
            
             $username = $_POST['username'] ?? '';
             $password = $_POST['password'] ?? '';
-            $username=  $this->MainModel->limpiarCadena($username);
-            $password=  $this->MainModel->limpiarCadena($password);
+           
 
             // Validación básica de los campos de entrada
             if (empty($username) || empty($password)) {

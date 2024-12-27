@@ -60,7 +60,7 @@ class MainModel
         $sql = "INSERT INTO $tabla ($columnas) VALUES ($valores)";
         
         $stmt = $this->conexion->prepare($sql); // Prepara la consulta
-        ;
+        
 
         try {
             $stmt->execute($datos); // Ejecuta la consulta con los datos
@@ -116,45 +116,75 @@ class MainModel
     }
 
    
-   // Método para consultar datos con soporte para LIKE
-public function consultar($tabla, $condiciones = [], $condicional = " AND ")
+    public function consultar($tabla, $condiciones = [], $condicional = " AND ", $orderby = '')
+    {
+        $condicionesString = "";
+        $parametros = []; // Para almacenar los parámetros correctamente
+    
+        if (!empty($condiciones)) {
+            $condicionesString = "WHERE " . implode($condicional, array_map(function($columna) use (&$parametros, $condiciones) {
+                // Detecta si la clave incluye un operador (por ejemplo, ">", "<", "=")
+                if (preg_match('/^(.+)\s*(=|!=|<|>|<=|>=|LIKE)$/', $columna, $matches)) {
+                    $campo = $matches[1];
+                    $operador = $matches[2];
+                    $parametros[$campo] = $condiciones[$columna];
+                    return "$campo $operador :$campo";
+                }
+                // Caso estándar: "campo = valor"
+                $parametros[$columna] = $condiciones[$columna];
+                return "$columna = :$columna";
+            }, array_keys($condiciones)));
+        }
+
+        
+    
+        // Si no hay condiciones, no poner el "WHERE"
+        $sql = "SELECT * FROM $tabla" . ($condicionesString ? " $condicionesString" : "") . " $orderby";
+        
+        $stmt = $this->conexion->prepare($sql);
+    
+        // Vincula los parámetros usando el array limpio
+        foreach ($parametros as $columna => $valor) {
+            $stmt->bindValue(":$columna", $valor, PDO::PARAM_STR);
+        }
+    
+        try {
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC); // Retorna los resultados como un array asociativo
+        } catch (PDOException $e) {
+            die("Error al consultar: " . $e->getMessage());
+        }
+    }
+    public function consultarConCondiciones($tabla, $condiciones = '', $orderby = '')
 {
-    $condicionesString = "";
+    // Construir la consulta SQL base
+    $sql = "SELECT * FROM $tabla";
+    
+    // Si hay condiciones, añadirlas a la consulta
     if (!empty($condiciones)) {
-        $condicionesString = "WHERE " . implode($condicional, array_map(function($columna, $valor) {
-            // Usa LIKE si el valor contiene un comodín (%)
-            return strpos($valor, '%') !== false ? "$columna LIKE :$columna" : "$columna = :$columna";
-        }, array_keys($condiciones), $condiciones));
+        $sql .= " WHERE " . $condiciones;
     }
 
-    $sql = "SELECT * FROM $tabla $condicionesString";
+    // Añadir el ORDER BY si es necesario
+    if (!empty($orderby)) {
+        $sql .= " $orderby";
+    }
+
+    
+
+    // Preparar la consulta
     $stmt = $this->conexion->prepare($sql);
 
-    // Vincula los parámetros, ajustando el formato para PDO
-    foreach ($condiciones as $columna => $valor) {
-        $stmt->bindValue(":$columna", $valor, PDO::PARAM_STR);
-    }
-
     try {
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC); // Retorna los resultados como un array asociativo
+        $stmt->execute(); // Ejecutar la consulta
+        return $stmt->fetchAll(PDO::FETCH_ASSOC); // Devolver los resultados como un array asociativo
     } catch (PDOException $e) {
         die("Error al consultar: " . $e->getMessage());
     }
 }
 
-//ejemplos
-// $resultados = $miClase->consultar('usuarios', [
-//     'nombre' => 'Juan',
-//     'edad' => '30'
-// ]);
-//---------------------------------------------
-// $resultados = $miClase->consultar('usuarios', [
-//     'nombre' => '%Juan%',
-//     'email' => '%gmail.com%'
-// ]);
-
-
+    
+   
 
 //Metodo para llamar al procedimiento almacenado crear perfil
 public function agregarPerfil($nombrePerfil, $usuarioC, $estado)

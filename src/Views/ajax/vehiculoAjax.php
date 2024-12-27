@@ -22,6 +22,42 @@ if (isset($_POST['modulo_vehiculo'])) {
 	}
 
 }
+//recibo peticion de tipo de vehiculo
+if (isset($_POST['tipo_vehiculo_vale'])) {
+    $tipo_vehiculo = intval($_POST['tipo_vehiculo_vale']);
+    echo '
+	<div class="form-group">
+	';
+	echo selectVehiculosActivos("vehiculo", "Vehículo", 0, $tipo_vehiculo);
+	echo '
+	</div>
+	';
+	echo '
+	<div class="form-group" >
+	';
+	echo selectConductoresActivos("conductor", "Conductor", 0, $tipo_vehiculo);
+	echo '
+	</div>
+	';
+	if ($tipo_vehiculo>1) {
+		echo '
+	<div class="form-group">
+	';
+		echo selectAuxiliaresActivos("auxiliar1", "Auxiliar 1",);
+		echo '
+	</div>
+	';
+
+		echo '
+	<div class="form-group">
+	';
+
+		echo selectAuxiliaresActivos("auxiliar2", "Auxiliar 2",);
+		echo '
+	</div>
+	';
+	}
+} 
 
 if (isset($_GET['datos'])) {
 

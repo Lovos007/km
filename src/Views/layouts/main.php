@@ -5,12 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $title ?? 'App km' ?></title>
-    <link rel="stylesheet" href=" <?= BASE_URL . '/src/Views/css/main.css' ?>">
-
-    
+    <link rel="stylesheet" href=" <?= BASE_URL . '/src/Views/css/main.css' ?>">   
 
 </head>
-
 <body>
 <header>
     <h1>APP KM</h1>
@@ -25,6 +22,13 @@
                     <li><a href="<?= BASE_URL . 'conductores' ?>">Conductores</a></li>
                     <li><a href="<?= BASE_URL . 'auxiliares' ?>">Auxiliares</a></li>
                     <li><a href="<?= BASE_URL . 'responsables' ?>">Responsables</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">Tareas</a>
+                <ul>
+                    <li><a href="<?= BASE_URL . 'vales' ?>">Vales      </a></li>
+                    <li><a href="<?= BASE_URL . 'valesDetalle' ?>">detalles de vale</a></li>
                 </ul>
             </li>
             <li>

@@ -17,11 +17,11 @@ final class AuxiliaresController
         $conexion = (new Database())->getConnection();
         $this->MainModel = new MainModel($conexion);
     }
-    public function getAuxiliares($search = '')
+    public function getAuxiliares($search = '',$filtro=[])
     {
         if ($search == '') {
             // Si se encontró el perfiles, lo devuelve, de lo contrario, retorna un array vacío.
-            $auxiliares = $this->MainModel->consultar('auxiliares');
+            $auxiliares = $this->MainModel->consultar('auxiliares',$filtro);
             return $auxiliares ? $auxiliares : [];
 
         } else {

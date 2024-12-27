@@ -45,10 +45,10 @@ $lista = $conductores->getConductores($search);
 
                 <?php foreach ($lista as $conductor): ?>
                     <tr>
-                        <td data-label="Placa"><?= htmlspecialchars($conductor['nombre'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td data-label="Marca"><?= htmlspecialchars($conductor['dui'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td data-label="Modelo"><?= htmlspecialchars(obtenerTipoLicencia($conductor['tipo_licencia1']), ENT_QUOTES, 'UTF-8') ?></td>
-                        <td data-label="Año"><?= htmlspecialchars($conductor['numero_contacto'], ENT_QUOTES, 'UTF-8') ?></td>
+                        <td data-label="Nombre"><?= htmlspecialchars($conductor['nombre'], ENT_QUOTES, 'UTF-8') ?></td>
+                        <td data-label="Dui"><?= htmlspecialchars($conductor['dui'], ENT_QUOTES, 'UTF-8') ?></td>
+                        <td data-label="Tipo licencia 1"><?= htmlspecialchars(obtenerTipoLicencia($conductor['tipo_licencia1']), ENT_QUOTES, 'UTF-8') ?></td>
+                        <td data-label="Numero de contacto"><?= htmlspecialchars($conductor['numero_contacto'], ENT_QUOTES, 'UTF-8') ?></td>
                         <td data-label="Empresa"><?= htmlspecialchars($conductor['empresa'], ENT_QUOTES, 'UTF-8') ?></td>
 
 

@@ -9,7 +9,7 @@ class View
         extract($data);
 
         $file = __DIR__ . '/pages/' . $template . '.php';
-        //echo $file;
+        //echo $template;
 
         if (file_exists($file)) {
             ob_start();
@@ -17,7 +17,15 @@ class View
             $content = ob_get_clean();
             
             if ($template!= "/login") {
-                include __DIR__ . '/layouts/main.php';
+
+                if ($template!= "impresionVale"){
+                    
+                    include __DIR__ . '/layouts/main.php';
+                   
+                }else{                    
+                    include __DIR__ . '/layouts/impresion.php';
+                }              
+
             }else{
                 include __DIR__ . '/layouts/login.php';
             }          

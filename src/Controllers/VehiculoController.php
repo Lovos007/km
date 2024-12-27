@@ -16,11 +16,11 @@ final class VehiculoController
         $this->MainModel = new MainModel($conexion);
     }
 
-    public function getVehiculos($search = '')
+    public function getVehiculos($search = '',$condiciones=[])
     {
         if ($search == '') {
             // Si se encontró el perfiles, lo devuelve, de lo contrario, retorna un array vacío.
-            $vechiculos = $this->MainModel->consultar('vehiculos');
+            $vechiculos = $this->MainModel->consultar('vehiculos',$condiciones);
             return $vechiculos ? $vechiculos : [];
 
         } else {
@@ -41,6 +41,33 @@ final class VehiculoController
         }
 
     }
+    public function getVehiculosCondicion($search = '',$condiciones="")
+    {
+        if ($search == '') {
+            // Si se encontró el perfiles, lo devuelve, de lo contrario, retorna un array vacío.
+            $vechiculos = $this->MainModel->consultarConCondiciones('vehiculos',$condiciones);
+            return $vechiculos ? $vechiculos : [];
+
+        } else {
+            $datos =
+                [
+                    'placa' => '%' . $search . '%',
+                    'marca' => '%' . $search . '%',
+                    'modelo' => '%' . $search . '%',
+                    'color' => '%' . $search . '%',
+                    'anio' => '%' . $search . '%',
+                    'empresa' => '%' . $search . '%'
+                ];
+                $datos = $this->MainModel->limpiarArray($datos);
+
+            $vechiculos = $this->MainModel->consultar('vehiculos', $datos," OR ");
+            return $vechiculos ? $vechiculos : [];
+
+        }
+
+    }
+
+
     public function getVehiculo($vehiculo_id)
     {
      return $vehiculo = $this->MainModel->consultar('vehiculos',['vehiculo_id' => $vehiculo_id]);
