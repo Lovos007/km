@@ -10,6 +10,7 @@ use App\Controllers\ConductoresController;
 define('BASE_URL', 'http://localhost/km/');
 define('BASE_URL_VISTA', 'http://localhost/');
 define('BASE_URL_ARCHIVOS', __DIR__.'/../src/Views/detalle_vales/'); 
+define('BASE_URL_ARCHIVOS_LICENCIAS', __DIR__.'/../src/Views/licencias/'); 
 
 
 date_default_timezone_set('America/El_Salvador');

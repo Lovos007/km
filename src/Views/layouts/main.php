@@ -19,7 +19,7 @@
                 <a href="#">Mantenimiento</a>
                 <ul>
                     <li><a href="<?= BASE_URL . 'vehiculos' ?>">Vehiculos</a></li>
-                    <li><a href="<?= BASE_URL . 'conductores' ?>">Conductores</a></li>
+                    <li><a href="<?= BASE_URL . 'conductores' ?>">Motoristas</a></li>
                     <li><a href="<?= BASE_URL . 'auxiliares' ?>">Auxiliares</a></li>
                     <li><a href="<?= BASE_URL . 'responsables' ?>">Responsables</a></li>
                 </ul>
@@ -28,7 +28,7 @@
                 <a href="#">Tareas</a>
                 <ul>
                     <li><a href="<?= BASE_URL . 'vales' ?>">Vales      </a></li>
-                    <li><a href="<?= BASE_URL . 'valesDetalle' ?>">detalles de vale</a></li>
+                    <li><a href="<?= BASE_URL . 'valesDetalle' ?>">Detalles de vale</a></li>
                 </ul>
             </li>
             <li>

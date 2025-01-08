@@ -35,7 +35,7 @@ if (isset($_POST['tipo_vehiculo_vale'])) {
 	echo '
 	<div class="form-group" >
 	';
-	echo selectConductoresActivos("conductor", "Conductor", 0, $tipo_vehiculo);
+	echo selectConductoresActivos("conductor", "Motorista", 0, $tipo_vehiculo);
 	echo '
 	</div>
 	';

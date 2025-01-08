@@ -117,44 +117,44 @@ class MainModel
 
    
     public function consultar($tabla, $condiciones = [], $condicional = " AND ", $orderby = '')
-    {
-        $condicionesString = "";
-        $parametros = []; // Para almacenar los parámetros correctamente
-    
-        if (!empty($condiciones)) {
-            $condicionesString = "WHERE " . implode($condicional, array_map(function($columna) use (&$parametros, $condiciones) {
-                // Detecta si la clave incluye un operador (por ejemplo, ">", "<", "=")
-                if (preg_match('/^(.+)\s*(=|!=|<|>|<=|>=|LIKE)$/', $columna, $matches)) {
-                    $campo = $matches[1];
-                    $operador = $matches[2];
-                    $parametros[$campo] = $condiciones[$columna];
-                    return "$campo $operador :$campo";
-                }
-                // Caso estándar: "campo = valor"
-                $parametros[$columna] = $condiciones[$columna];
-                return "$columna = :$columna";
-            }, array_keys($condiciones)));
-        }
+{
+    $condicionesString = "";
+    $parametros = []; // Para almacenar los parámetros correctamente
 
-        
-    
-        // Si no hay condiciones, no poner el "WHERE"
-        $sql = "SELECT * FROM $tabla" . ($condicionesString ? " $condicionesString" : "") . " $orderby";
-        
-        $stmt = $this->conexion->prepare($sql);
-    
-        // Vincula los parámetros usando el array limpio
-        foreach ($parametros as $columna => $valor) {
-            $stmt->bindValue(":$columna", $valor, PDO::PARAM_STR);
-        }
-    
-        try {
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC); // Retorna los resultados como un array asociativo
-        } catch (PDOException $e) {
-            die("Error al consultar: " . $e->getMessage());
-        }
+    if (!empty($condiciones)) {
+        $condicionesString = "WHERE " . implode($condicional, array_map(function($columna) use (&$parametros, $condiciones) {
+            $valor = $condiciones[$columna];
+            
+            // Si el valor contiene '%', se usa LIKE
+            if (strpos($valor, '%') !== false) {
+                $parametros[$columna] = $valor;
+                return "$columna LIKE :$columna";
+            }
+
+            // Si no, se usa "=" por defecto
+            $parametros[$columna] = $valor;
+            return "$columna = :$columna";
+        }, array_keys($condiciones)));
     }
+
+    // Si no hay condiciones, no poner el "WHERE"
+    $sql = "SELECT * FROM $tabla" . ($condicionesString ? " $condicionesString" : "") . " $orderby";
+
+    $stmt = $this->conexion->prepare($sql);
+
+    // Vincula los parámetros usando el array limpio
+    foreach ($parametros as $columna => $valor) {
+        $stmt->bindValue(":$columna", $valor, PDO::PARAM_STR);
+    }
+
+    try {
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC); // Retorna los resultados como un array asociativo
+    } catch (PDOException $e) {
+        die("Error al consultar: " . $e->getMessage());
+    }
+}
+
     public function consultarConCondiciones($tabla, $condiciones = '', $orderby = '')
 {
     // Construir la consulta SQL base

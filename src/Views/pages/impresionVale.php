@@ -23,19 +23,7 @@ use App\Controllers\ValesController;
     $responsable_id = $vale[0]["responsable_id"];
     $estado = $vale[0]["estado"];
 
-    if ($estado != 1) {
 
-        $alerta = [
-            "tipo" => "simpleRedireccion",
-            "titulo" => "Infraccion de seguridad",
-            "texto" => "El vale  $numero no se encuentra activo",
-            "icono" => "error",
-            "url" => BASE_URL . 'vales'
-        ];
-
-        $alerta = json_encode($alerta);
-        echo php_alerta_redireccionar($alerta);
-    }
     ?>
 
 
@@ -44,7 +32,7 @@ use App\Controllers\ValesController;
             <thead>
                 <tr>
                     <th>Placa</th>
-                    <th>Conductor</th>
+                    <th>Motorista</th>
                     <th>kilometraje</th>
                     <th>Gasolina</th>
                     <th>Power</th>

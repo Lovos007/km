@@ -6,7 +6,7 @@ $search = isset($_POST['search']) ? $_POST['search'] : '';
 
 $vechiculos = new VehiculoController();
 $lista = $vechiculos->getVehiculos($search);
-
+//var_dump($lista);
 
 ?>
 <div class="table-container">

@@ -118,7 +118,7 @@ use App\Controllers\ValesController;
                     <thead>
                         <tr>
                             <th>Placa</th>
-                            <th>Conductor</th>
+                            <th>Motorista</th>
                             <th>kilometraje</th>
                             <th>Sumas ($)</th>
                             <th>Acciones</th>

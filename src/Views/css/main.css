@@ -662,3 +662,26 @@ button:hover {
     align-self: center;
     background-color: white;
 }
+
+.image-container {
+    width: 500px;
+    height: 400px;
+    overflow: hidden; /* Para asegurar que la imagen no salga de los bordes */
+    border-radius: 15px; /* Bordes redondeados */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Sombra */
+    border: 5px solid #ddd; /* Borde */
+}
+
+/* Imagen con estilo */
+.styled-image {
+    width: 90%;
+    height: 90%;
+    object-fit: cover; /* Ajuste para que la imagen llene el contenedor */
+    transition: transform 0.3s ease, filter 0.3s ease; /* Efecto de transición */
+}
+
+/* Efecto hover */
+.styled-image:hover {
+    transform: scale(1.1); /* Zoom */
+    filter: brightness(1.2); /* Aumentar el brillo */
+}

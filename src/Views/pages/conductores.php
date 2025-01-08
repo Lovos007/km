@@ -11,10 +11,10 @@ $lista = $conductores->getConductores($search);
 
 ?>
 <div class="table-container">
-    <a href="<?= BASE_URL . 'nuevoConductor' ?>" class="enlace">Nuevo conductor</a>
+    <a href="<?= BASE_URL . 'nuevoConductor' ?>" class="enlace">Nuevo motorista</a>
 
     <div class="h2-estandar">
-        <h2>LISTADO DE CONDUCTORES</h2>
+        <h2>LISTADO DE MOTORISTAS</h2>
     </div>
     <!-- Formulario de búsqueda -->
     <div class="search-container">

@@ -16,31 +16,32 @@ final class VehiculoController
         $this->MainModel = new MainModel($conexion);
     }
 
-    public function getVehiculos($search = '',$condiciones=[])
+    public function getVehiculos($search = '', $condiciones = [])
     {
-        if ($search == '') {
-            // Si se encontró el perfiles, lo devuelve, de lo contrario, retorna un array vacío.
-            $vechiculos = $this->MainModel->consultar('vehiculos',$condiciones);
-            return $vechiculos ? $vechiculos : [];
-
+        if ($search === '') {
+            // Si no hay búsqueda, filtra solo por las condiciones adicionales.
+            $vehiculos = $this->MainModel->consultar('vehiculos', $condiciones);
+            return $vehiculos ?: []; // Retorna el resultado o un array vacío.
         } else {
-            $datos =
-                [
-                    'placa' => '%' . $search . '%',
-                    'marca' => '%' . $search . '%',
-                    'modelo' => '%' . $search . '%',
-                    'color' => '%' . $search . '%',
-                    'anio' => '%' . $search . '%',
-                    'empresa' => '%' . $search . '%'
-                ];
-                $datos = $this->MainModel->limpiarArray($datos);
-
-            $vechiculos = $this->MainModel->consultar('vehiculos', $datos," OR ");
-            return $vechiculos ? $vechiculos : [];
-
+            // Prepara los datos para la búsqueda con operadores LIKE
+            $datos = [
+                'placa' => '%' . $search . '%',
+                'marca' => '%' . $search . '%',
+                'modelo' => '%' . $search . '%',
+                'color' => '%' . $search . '%',
+                'anio' => '%' . $search . '%',
+                'empresa' => '%' . $search . '%'
+            ];
+    
+            // Limpia el array de datos
+            $datos = $this->MainModel->limpiarArray($datos);
+    
+            // Realiza la consulta con el operador OR
+            $vehiculos = $this->MainModel->consultar('vehiculos', $datos, " OR ");
+            return $vehiculos ?: []; // Retorna el resultado o un array vacío.
         }
-
     }
+    
     public function getVehiculosCondicion($search = '',$condiciones="")
     {
         if ($search == '') {
@@ -263,10 +264,28 @@ final class VehiculoController
             ];
             return json_encode($alerta);
         }
+        $placa= $_POST['placa']; 
+        $vehiculo_id= $_POST['vehiculo_id'];  
+
+        // Verificar que la placa no exista
+        $placa_existe = $this->MainModel->consultar('vehiculos', ['placa' => $placa]);
+        if (count($placa_existe) > 0) {
+            if ($placa_existe[0]["vehiculo_id"]!=$vehiculo_id) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Error al registrar",
+                    "texto" => "El vehículo con placa $placa ya existe.",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+                
+            }
+      
+        }
 
         // Recibir datos del formulario
-        $placa= $_POST['placa']; 
-        $vehiculo_id= $_POST['vehiculo_id'];       
+       
+             
         $marca = $_POST['marca'];
         $modelo = $_POST['modelo'];
         $anio = $_POST['año']; // Cambio año -> anio
@@ -284,7 +303,7 @@ final class VehiculoController
 
          // Datos para actualizar
          $datos = [
-            
+            'placa' => $placa,
             'marca' => $marca,
             'modelo' => $modelo,
             'anio' => $anio, // Corregido

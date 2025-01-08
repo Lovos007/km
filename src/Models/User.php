@@ -111,6 +111,7 @@ class User
             if ($permiso && $permiso['estado'] != 0) {
                 return true;
             }
+            return false;
         }
 
         // Si no se encuentra el permiso o no está activo, retornar false

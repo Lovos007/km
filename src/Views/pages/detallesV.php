@@ -44,7 +44,7 @@ use App\Controllers\ValesController;
             <thead>
                 <tr>
                     <th>Placa</th>
-                    <th>Conductor</th>
+                    <th>Motorista</th>
                     <th>kilometraje</th>
                     <th>Gasolina</th>
                     <th>Power</th>

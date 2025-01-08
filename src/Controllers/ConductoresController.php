@@ -87,7 +87,7 @@ final class ConductoresController
 
     public function crearConductor()
     {
-        if (empty($_POST['nombre']) || empty($_POST['dui']) || empty($_POST['empresa'])) {
+        if (empty($_POST['nombre']) || empty($_POST['apellido']) || empty($_POST['dui']) || empty($_POST['empresa'])) {
 
             $alerta = [
                 "tipo" => "simple",
@@ -127,6 +127,7 @@ final class ConductoresController
 
         // Recibir datos del formulario
         $nombre = $_POST['nombre'];
+        $apellido = $_POST['apellido'];
         $tipo_licencia1 = $_POST['tipo_licencia1'];
         $licencia1 = $_POST['licencia1'] ?? null;
         $tipo_licencia2 = $_POST['tipo_licencia2'] ?? null;
@@ -134,13 +135,160 @@ final class ConductoresController
         $empresa = $_POST['empresa'];
         $numero_contacto = $_POST['numero'] ?? null;
         $correo = $_POST['correo'] ?? null;
+        $refrenda1 = $_POST['refrenda1'] ?? null;
+        $refrenda2 = $_POST['refrenda2'] ?? null;
         $usuario_c = usuario_session();
         $estado = 1;
 
+        if (isset($_FILES['foto1']) && $_FILES['foto1']["name"] != "") {
+            $mimeType = mime_content_type($_FILES['foto1']['tmp_name']);
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+            if (!in_array($mimeType, $allowedTypes)) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: Solo se permiten imágenes JPEG, PNG o GIF.",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+
+            }
+            $maxSize = 2 * 1024 * 1024; // 2 MB
+            if ($_FILES['foto1']['size'] > $maxSize) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: La imagen es demasiado grande. Tamaño máximo: 2 MB.",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+            }
+
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+            $fileExtension = pathinfo($_FILES['foto1']['name'], PATHINFO_EXTENSION);
+
+            if (!in_array(strtolower($fileExtension), $allowedExtensions)) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: Extensión de archivo no permitida.",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+            }
+
+            if (!getimagesize($_FILES['foto1']['tmp_name'])) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: El archivo no es una imagen válida.",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+
+            }
+
+        }
+
+        $url_base_foto1 = "";
+
+        if (isset($_FILES['foto1']) && $_FILES['foto1']["name"] != "") {
+
+            $uploadDir = BASE_URL_ARCHIVOS_LICENCIAS;
+            $newFileName = $nombre . "_" . $dui . "_" . "L1" . "_img_." . $fileExtension;
+            $uploadPath = $uploadDir . $newFileName;
+
+            if (move_uploaded_file($_FILES['foto1']['tmp_name'], $uploadPath)) {
+                $url_base_foto1 = $newFileName;
+            } else {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "La imagen no se guardo",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+            }
+        }
+        // FIN VALIDACION DE IMAGEN LICENCIA 1
+
+        if (isset($_FILES['foto2']) && $_FILES['foto2']["name"] != "") {
+            $mimeType = mime_content_type($_FILES['foto2']['tmp_name']);
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+            if (!in_array($mimeType, $allowedTypes)) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: Solo se permiten imágenes JPEG, PNG o GIF. -2",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+
+            }
+            $maxSize = 2 * 1024 * 1024; // 2 MB
+            if ($_FILES['foto2']['size'] > $maxSize) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: La imagen es demasiado grande. Tamaño máximo: 2 MB. -2",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+            }
+
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+            $fileExtension = pathinfo($_FILES['foto2']['name'], PATHINFO_EXTENSION);
+
+            if (!in_array(strtolower($fileExtension), $allowedExtensions)) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: Extensión de archivo no permitida. -2",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+            }
+
+            if (!getimagesize($_FILES['foto2']['tmp_name'])) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: El archivo no es una imagen válida. -2",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+
+            }
+
+        }
+
+        $url_base_foto2 = "";
+
+        if (isset($_FILES['foto2']) && $_FILES['foto2']["name"] != "") {
+
+            $uploadDir = BASE_URL_ARCHIVOS_LICENCIAS;
+            $newFileName = $nombre . "_" . $dui . "_" . "L2" . "_img_." . $fileExtension;
+            $uploadPath = $uploadDir . $newFileName;
+
+            if (move_uploaded_file($_FILES['foto2']['tmp_name'], $uploadPath)) {
+                $url_base_foto2 = $newFileName;
+            } else {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "La imagen no se guardo",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+            }
+        }
 
         // Datos a insertar
         $datos = [
             'nombre' => $nombre,
+            'apellido' => $apellido,
             'dui' => $dui,
             'tipo_licencia1' => $tipo_licencia1,
             'licencia1' => $licencia1,
@@ -149,6 +297,10 @@ final class ConductoresController
             'empresa' => $empresa,
             'numero_contacto' => $numero_contacto,
             'correo' => $correo,
+            'fecha_licencia1' => $refrenda1,
+            'fecha_licencia2' => $refrenda2,
+            'ruta_licencia1' => $url_base_foto1,
+            'ruta_licencia2' => $url_base_foto2,
             'estado' => $estado,
             'usuario_c' => $usuario_c
         ];
@@ -246,7 +398,7 @@ final class ConductoresController
     }
     public function modificarCondcutor()
     {
-        if (empty($_POST['nombre']) || empty($_POST['dui']) || empty($_POST['empresa']) || empty($_POST['conductor_id'])) {
+        if (empty($_POST['nombre']) || empty($_POST['apellido']) || empty($_POST['dui']) || empty($_POST['empresa']) || empty($_POST['conductor_id'])) {
 
             $alerta = [
                 "tipo" => "simple",
@@ -272,10 +424,10 @@ final class ConductoresController
 
         // Verificar que el dui del conductor no exista
         $conductor_existe = $this->MainModel->consultar('conductores', ['dui' => $dui]);
-        // var_dump($conductor_existe);
+         //var_dump($conductor_existe);
 
         if (count($conductor_existe) > 0) {
-            if (!$conductor_existe[0]['conductor_id'] == $_POST['conductor_id']) {
+            if ($conductor_existe[0]['conductor_id'] != $_POST['conductor_id']) {
                 $alerta = [
                     "tipo" => "simple",
                     "titulo" => "Error al registrar",
@@ -284,12 +436,19 @@ final class ConductoresController
                 ];
                 return json_encode($alerta);
             }
+           $sql_imagen1 = $conductor_existe[0]['ruta_licencia1'];
+           $sql_imagen2 = $conductor_existe[0]['ruta_licencia1'];
+
+
         }
+        
+        
 
         // Recibir datos del formulario
 
         $conductor_id = $_POST['conductor_id'];
         $nombre = $_POST['nombre'];
+        $apellido = $_POST['apellido'];
         $tipo_licencia1 = $_POST['tipo_licencia1'];
         $licencia1 = $_POST['licencia1'] ?? null;
         $tipo_licencia2 = $_POST['tipo_licencia2'] ?? null;
@@ -300,10 +459,168 @@ final class ConductoresController
         $usuario_u = usuario_session();
         $estado = 1;
 
+        $refrenda1 = $_POST['refrenda1'] ?? null;
+        $refrenda2 = $_POST['refrenda2'] ?? null;
 
-        // Datos a insertar
+        //fin de formulario 
+
+        if (isset($_FILES['foto1']) && $_FILES['foto1']["name"] != "") {
+            $mimeType = mime_content_type($_FILES['foto1']['tmp_name']);
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+            if (!in_array($mimeType, $allowedTypes)) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: Solo se permiten imágenes JPEG, PNG o GIF.",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+
+            }
+            $maxSize = 2 * 1024 * 1024; // 2 MB
+            if ($_FILES['foto1']['size'] > $maxSize) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: La imagen es demasiado grande. Tamaño máximo: 2 MB.",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+            }
+
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+            $fileExtension = pathinfo($_FILES['foto1']['name'], PATHINFO_EXTENSION);
+
+            if (!in_array(strtolower($fileExtension), $allowedExtensions)) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: Extensión de archivo no permitida.",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+            }
+
+            if (!getimagesize($_FILES['foto1']['tmp_name'])) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: El archivo no es una imagen válida.",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+
+            }
+
+        }
+
+        $url_base_foto1 = "";
+
+        if (isset($_FILES['foto1']) && $_FILES['foto1']["name"] != "") {
+
+            $uploadDir = BASE_URL_ARCHIVOS_LICENCIAS;
+            $newFileName = $nombre . "_" . $dui . "_" . "L1" . "_img_." . $fileExtension;
+            $uploadPath = $uploadDir . $newFileName;
+
+            if (move_uploaded_file($_FILES['foto1']['tmp_name'], $uploadPath)) {
+                $url_base_foto1 = $newFileName;
+            } else {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "La imagen no se guardo",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+            }
+        }
+        // FIN VALIDACION DE IMAGEN LICENCIA 1
+
+        if (isset($_FILES['foto2']) && $_FILES['foto2']["name"] != "") {
+            $mimeType = mime_content_type($_FILES['foto2']['tmp_name']);
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+            if (!in_array($mimeType, $allowedTypes)) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: Solo se permiten imágenes JPEG, PNG o GIF. -2",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+
+            }
+            $maxSize = 2 * 1024 * 1024; // 2 MB
+            if ($_FILES['foto2']['size'] > $maxSize) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: La imagen es demasiado grande. Tamaño máximo: 2 MB. -2",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+            }
+
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+            $fileExtension = pathinfo($_FILES['foto2']['name'], PATHINFO_EXTENSION);
+
+            if (!in_array(strtolower($fileExtension), $allowedExtensions)) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: Extensión de archivo no permitida. -2",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+            }
+
+            if (!getimagesize($_FILES['foto2']['tmp_name'])) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: El archivo no es una imagen válida. -2",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+
+            }
+
+        }
+
+        $url_base_foto2 = "";
+
+        if (isset($_FILES['foto2']) && $_FILES['foto2']["name"] != "") {
+
+            $uploadDir = BASE_URL_ARCHIVOS_LICENCIAS;
+            $newFileName = $nombre . "_" . $dui . "_" . "L2" . "_img_." . $fileExtension;
+            $uploadPath = $uploadDir . $newFileName;
+
+            if (move_uploaded_file($_FILES['foto2']['tmp_name'], $uploadPath)) {
+                $url_base_foto2 = $newFileName;
+            } else {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "La imagen no se guardo",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+            }
+        }
+
+        if ($url_base_foto1=="") {
+            $url_base_foto1=$sql_imagen1;
+        }
+        if ($url_base_foto2=="") {
+            $url_base_foto2=$sql_imagen2;
+        }
+
+
+        // Datos a modificar
         $datos = [
             'nombre' => $nombre,
+            'apellido' => $apellido,
             'dui' => $dui,
             'tipo_licencia1' => $tipo_licencia1,
             'licencia1' => $licencia1,
@@ -313,7 +630,11 @@ final class ConductoresController
             'numero_contacto' => $numero_contacto,
             'correo' => $correo,
             'estado' => $estado,
-            'usuario_u' => $usuario_u
+            'usuario_u' => $usuario_u,
+            'fecha_licencia1' => $refrenda1,
+            'fecha_licencia2' => $refrenda2,
+            'ruta_licencia1' => $url_base_foto1,
+            'ruta_licencia2' => $url_base_foto2
         ];
         $datos = $this->MainModel->limpiarArray($datos);
         $filtro = ['conductor_id' => $conductor_id];

@@ -1,5 +1,6 @@
 <?php 
 use App\Controllers\VehiculoController;
+use App\Controllers\PermisoController;
 ?>
 
 <?php if(isset($_GET["datos"])): ?>
@@ -25,7 +26,16 @@ use App\Controllers\VehiculoController;
     $km_actual =$vehiculo[0]["km_actual"];
     $km_anterior =$vehiculo[0]["km_anterior"];
     $ruta_fotos =$vehiculo[0]["ruta_fotos"];
-    $targeta_vence =$vehiculo[0]["targeta_vence"];   
+    $targeta_vence =$vehiculo[0]["targeta_vence"];  
+    
+    $PermisoController = new PermisoController();
+    $permiso_motor= $PermisoController->getPermiso_SB(usuario_session(),80);
+    if ($permiso_motor) {
+        $p_motor="";
+    }else {
+        $p_motor="readonly";
+    }
+
     
     ?>
     
@@ -45,7 +55,7 @@ use App\Controllers\VehiculoController;
         
         <div class="form-group">
             <label for="placa">Placa</label>
-            <input type="text" id="placa" name="placa" placeholder="placa del vehiculo" value="<?=$placa ?>" readonly required >
+            <input type="text" id="placa" name="placa" oninput="this.value = this.value.toUpperCase();" placeholder="placa del vehiculo" value="<?=$placa ?>"  required >
         </div>
         <div class="form-group">
             <label for="marca">Marca</label>
@@ -79,7 +89,7 @@ use App\Controllers\VehiculoController;
         </div>
         <div class="form-group">
             <label for="n_motor"># de motor</label>
-            <input type="text" id="n_motor" name="n_motor" placeholder="# de motor" value="<?=$n_motor ?>">
+            <input type="text" id="n_motor" name="n_motor" placeholder="# de motor" value="<?=$n_motor ?>" <?= $p_motor?>>
         </div>
         <div class="form-group">
             <label for="n_vin"># de vin</label>

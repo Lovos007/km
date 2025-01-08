@@ -6,7 +6,7 @@
         
         <div class="form-group">
             <label for="placa">Placa</label>
-            <input type="text" id="placa" name="placa" placeholder="placa del vehiculo" required >
+            <input type="text" id="placa" name="placa" placeholder="placa del vehiculo" oninput="this.value = this.value.toUpperCase();" required >
         </div>
         <div class="form-group">
             <label for="marca">Marca</label>
