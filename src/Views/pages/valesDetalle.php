@@ -55,7 +55,7 @@ $lista = $vales->getValesDetalles($search);
 
 
                             <?php if ($vale['estado'] == 1): ?>
-                                <a href="<?= BASE_URL . 'ingresoVale?d=' . base64_encode($vale['vale_id']) ?>">Ingresar datos</a>
+                                <a href="<?= BASE_URL . 'ingresoVale?d=' . base64_encode($vale['vale_id']).'&n=y' ?>">Ingresar datos</a>
                                 <a href="<?= BASE_URL . 'detallesV?d=' . base64_encode($vale['vale_id']) ?>">Detalles</a>
                                 <a href="<?= BASE_URL . 'src/Views/ajax/valeAjax.php?datos=' .
                                     base64_encode($vale['vale_id']) ?>">Cerrar Vale

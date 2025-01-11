@@ -8,7 +8,7 @@ use App\Models\Database;
 
 final class ResponsablesController
 {
-    
+
     private $MainModel;
 
     public function __construct()
@@ -30,11 +30,11 @@ final class ResponsablesController
                     'nombre' => '%' . $search . '%',
                     'cargo' => '%' . $search . '%',
                     'empresa' => '%' . $search . '%'
-                    
-                ];
-                $datos = $this->MainModel->limpiarArray($datos);
 
-            $responsables = $this->MainModel->consultar('responsables', $datos," OR ");
+                ];
+            $datos = $this->MainModel->limpiarArray($datos);
+
+            $responsables = $this->MainModel->consultar('responsables', $datos, " OR ");
             return $responsables ? $responsables : [];
 
         }
@@ -42,14 +42,16 @@ final class ResponsablesController
     }
     public function getResponsable($responsable_id)
     {
-        return $responsable = $this->MainModel->consultar('responsables',
-         ['responsable_id' => $responsable_id]);
+        return $responsable = $this->MainModel->consultar(
+            'responsables',
+            ['responsable_id' => $responsable_id]
+        );
 
     }
 
     public function crearResponsable()
     {
-        if (empty($_POST['nombre'])  || empty($_POST['empresa']))  {
+        if (empty($_POST['nombre']) || empty($_POST['apellido']) || empty($_POST['dui']) || empty($_POST['empresa'])) {
 
             $alerta = [
                 "tipo" => "simple",
@@ -61,26 +63,34 @@ final class ResponsablesController
         }
 
         // Recibir datos del formulario
-        $nombre = $_POST['nombre'];        
+        $nombre = $_POST['nombre'];
+        $apellido = $_POST['apellido'];
+        $dui = $_POST['dui'];
+        $numero = $_POST['numero'] ?? null;
+        $correo = $_POST['correo'] ?? null;
         $cargo = $_POST['cargo'] ?? null;
         $empresa = $_POST['empresa'];
         $usuario_c = usuario_session();
         $estado = 1;
 
-    
+
         // Datos a insertar
         $datos = [
             'nombre' => $nombre,
+            'apellido' => $apellido,
+            'dui' => $dui,
+            'numero' => $numero,
+            'correo' => $correo,
             'cargo' => $cargo,
             'empresa' => $empresa,
             'estado' => $estado,
             'usuario_c' => $usuario_c
         ];
         $datos = $this->MainModel->limpiarArray($datos);
-    
+
         // Insertar en la base de datos
         $resultado = $this->MainModel->insertar("responsables", $datos);
-    
+
         if ($resultado > 0) {
             $alerta = [
                 "tipo" => "simpleRedireccion",
@@ -100,24 +110,25 @@ final class ResponsablesController
         return json_encode($alerta);
     }
 
-    public function modificarEstadoResponsable($responsable_id){
+    public function modificarEstadoResponsable($responsable_id)
+    {
         $responsable = $this->getResponsable($responsable_id);
-        
-        $estado = $responsable[0]['estado'];
-         
-         $tabla='responsables';
-         
-         $filtro = ['responsable_id' => $responsable_id];
 
-         if ($estado > 0) {
+        $estado = $responsable[0]['estado'];
+
+        $tabla = 'responsables';
+
+        $filtro = ['responsable_id' => $responsable_id];
+
+        if ($estado > 0) {
             $datos = [
                 'estado' => 0,
-                'usuario_u' => usuario_session()                
-            ];     
-            $datos = $this->MainModel->limpiarArray($datos);          
+                'usuario_u' => usuario_session()
+            ];
+            $datos = $this->MainModel->limpiarArray($datos);
 
-            $resultado = $this->MainModel->actualizar($tabla,$datos,$filtro);
-            if ($resultado>0){
+            $resultado = $this->MainModel->actualizar($tabla, $datos, $filtro);
+            if ($resultado > 0) {
                 $alerta = [
                     "tipo" => "simpleRedireccion",
                     "titulo" => "responsable modificado",
@@ -126,7 +137,7 @@ final class ResponsablesController
                     "url" => BASE_URL . 'responsables'
                 ];
 
-            }else{
+            } else {
                 $alerta = [
                     "tipo" => "simpleRedireccion",
                     "titulo" => "Ocurrio un error",
@@ -135,16 +146,16 @@ final class ResponsablesController
                     "url" => BASE_URL . 'responsables'
                 ];
             }
-           
+
         } else {
             $datos = [
                 'estado' => 1,
-                'usuario_u' => usuario_session()               
-            ];    
+                'usuario_u' => usuario_session()
+            ];
             $datos = $this->MainModel->limpiarArray($datos);
 
-            $resultado = $this->MainModel->actualizar($tabla,$datos,$filtro);
-            if ($resultado>0){
+            $resultado = $this->MainModel->actualizar($tabla, $datos, $filtro);
+            if ($resultado > 0) {
                 $alerta = [
                     "tipo" => "simpleRedireccion",
                     "titulo" => "responsable modificado",
@@ -153,7 +164,7 @@ final class ResponsablesController
                     "url" => BASE_URL . 'responsables'
                 ];
 
-            }else{
+            } else {
                 $alerta = [
                     "tipo" => "simpleRedireccion",
                     "titulo" => "Ocurrio un error",
@@ -166,8 +177,9 @@ final class ResponsablesController
         return json_encode($alerta); // Retornar alerta en formato JSON
     }
 
-    public function modificarResponsable(){
-        if (empty($_POST['nombre'])  || empty($_POST['empresa'])|| empty($_POST['responsable_id']))  {
+    public function modificarResponsable()
+    {
+        if (empty($_POST['nombre']) || empty($_POST['apellido']) || empty($_POST['dui']) || empty($_POST['empresa']) || empty($_POST['responsable_id'])) {
 
             $alerta = [
                 "tipo" => "simple",
@@ -180,26 +192,34 @@ final class ResponsablesController
 
         // Recibir datos del formulario
 
-       $responsable_id = $_POST['responsable_id']; 
-       $nombre = $_POST['nombre'];        
-       $cargo = $_POST['cargo'] ?? null;
-       $empresa = $_POST['empresa'];
-       $usuario_u = usuario_session();
-       $estado = 1;
+        $responsable_id = $_POST['responsable_id'];
+        $nombre = $_POST['nombre'];
+        $apellido = $_POST['apellido'];
+        $dui = $_POST['dui'];
+        $numero = $_POST['numero'] ?? null;
+        $correo = $_POST['correo'] ?? null;
+        $cargo = $_POST['cargo'] ?? null;
+        $empresa = $_POST['empresa'];
+        $usuario_u = usuario_session();
+        $estado = 1;
 
-   
-       // Datos a insertar
-       $datos = [
-           'nombre' => $nombre,
-           'cargo' => $cargo,
-           'empresa' => $empresa,
-           'estado' => $estado,
-           'usuario_u' => $usuario_u
-       ];
-       $datos = $this->MainModel->limpiarArray($datos);
-        $filtro= ['responsable_id' => $responsable_id];
 
-        $resultado = $this->MainModel->actualizar('responsables',$datos,$filtro);
+        // Datos a insertar
+        $datos = [
+            'nombre' => $nombre,
+            'apellido' => $apellido,
+            'dui' => $dui,
+            'numero' => $numero,
+            'correo' => $correo,
+            'cargo' => $cargo,
+            'empresa' => $empresa,
+            'estado' => $estado,
+            'usuario_u' => $usuario_u
+        ];
+        $datos = $this->MainModel->limpiarArray($datos);
+        $filtro = ['responsable_id' => $responsable_id];
+
+        $resultado = $this->MainModel->actualizar('responsables', $datos, $filtro);
         // Verificar si la inserción fue exitosa
         if ($resultado != '') {
             $alerta = [
@@ -215,10 +235,10 @@ final class ResponsablesController
 
 
 
-    
+
 
     }
 
 
-    
+
 }

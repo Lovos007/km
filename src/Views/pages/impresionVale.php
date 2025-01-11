@@ -14,7 +14,9 @@ use App\Controllers\ValesController;
 
     $lista = $vales->getDetallesVale($vale_id);
 
-    
+    $resumen =$vales->TablaResumenVale($vale_id);
+
+
 
     $total = 0;
 
@@ -31,14 +33,18 @@ use App\Controllers\ValesController;
         <table id="userTable">
             <thead>
                 <tr>
+                    <th colspan="6" style="text-align: center;">
+                        Numero de vale: <?= $numero ?>
+                    </th>
+                </tr>
+                <tr>
                     <th>Placa</th>
                     <th>Motorista</th>
                     <th>kilometraje</th>
-                    <th>Gasolina</th>
-                    <th>Power</th>
-                    <th>Aceite</th>
+                    <th>Tipo de gasto</th>
+                    <th>Cantidad</th>
                     <th>Sumas ($)</th>
-                  
+
                 </tr>
             </thead>
             <tbody>
@@ -49,7 +55,7 @@ use App\Controllers\ValesController;
                 <?php else: ?>
 
                     <?php foreach ($lista as $valeDetalle): ?>
-                        <?php $suma = $valeDetalle["monto_gasolina"] + $valeDetalle["monto_power"] + $valeDetalle["monto_aceite"];
+                        <?php $suma = $valeDetalle["monto_gasto"];
                         $total = $total + $suma;
 
                         ?>
@@ -62,30 +68,65 @@ use App\Controllers\ValesController;
                             </td>
                             <td data-label="kilometraje"><?= htmlspecialchars($valeDetalle['kilometraje'], ENT_QUOTES, 'UTF-8') ?>
                             </td>
-                            <td data-label="Gasolina">($)<?= htmlspecialchars($valeDetalle['monto_gasolina'], ENT_QUOTES, 'UTF-8') ?>
+                            <td data-label="Tipo de gasto"><?= htmlspecialchars($valeDetalle['tipo_gasto'], ENT_QUOTES, 'UTF-8') ?>
                             </td>
-                            <td data-label="Power">($)<?= htmlspecialchars($valeDetalle['monto_power'], ENT_QUOTES, 'UTF-8') ?>
+
+                            <td data-label="Cantidad"><?= htmlspecialchars($valeDetalle['cantidad_gasto'], ENT_QUOTES, 'UTF-8') ?>
                             </td>
-                            <td data-label="Aceite">($)<?= htmlspecialchars($valeDetalle['monto_aceite'], ENT_QUOTES, 'UTF-8') ?>
-                            </td>
+
                             <td data-label="Sumas ($)"><?= htmlspecialchars("$ " . $suma, ENT_QUOTES, 'UTF-8') ?>
                             </td>
                             </td>
-                           
-                            
+
+
                         </tr>
                     <?php endforeach; ?>
                     <tr>
                         <td> </td>
                         <td> </td>
-
+                        <td> </td>
+                        <td> </td>
                         <td>Total</td>
                         <td>($) <?= $total ?></td>
                         <td> </td>
-                        <td> </td>
-                        <td> </td>
+
                     </tr>
 
+                <?php endif; ?>
+            </tbody>
+        </table>
+        <br>
+
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="4" style="text-align: center;">
+                        Resumen de vale: <?= $numero ?>
+                    </th>
+                </tr>
+                <tr>
+                    <th style="text-align: center;">Tipo de gasto</th>
+                    <th style="text-align: center;">Cantidad</th>
+                    <th style="text-align: center;">Precio de unitario</th>
+                    <th style="text-align: center;">Monto</th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php if (empty($lista)): ?>
+                    <tr>
+                        <td data-label="" colspan="8" style="text-align: center;">No hay detalles aun</td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach ($resumen as $tipo): ?>
+                        <tr>
+                            <td style="text-align: center;" data-label="Tipo de gasto"><?= $tipo["tipo_gasto"] ?></td>
+                            <td style="text-align: center;" data-label="Cantidad"><?= $tipo["cantidad"] ?></td>
+                            <td style="text-align: center;" data-label="precio unitario"><?= number_format($tipo["precio_unitario"],2) ?></td>
+                            <td style="text-align: center;" data-label="Total"><?= number_format($tipo["monto"],2) ?></td>
+                        </tr>
+                        
+                    <?php endforeach; ?>
+               
                 <?php endif; ?>
             </tbody>
         </table>

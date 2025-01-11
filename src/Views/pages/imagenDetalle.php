@@ -10,8 +10,8 @@ use App\Controllers\ValesController;
 
     $vale = $ValeController->getDetalleVale($vale_detalle_id);
     $nombre_imagen = $vale[0]["ruta_foto"];
-    $tipo_combustible = $vale[0]["tipo_combustible"];
-    $monto_gasolina = $vale[0]["monto_gasolina"];
+    $tipo_combustible = $vale[0]["tipo_gasto"];
+    $monto_gasolina = $vale[0]["monto_gasto"];
     $placa = obtenerPlaca($vale[0]["vehiculo_id"]);
     $conductor = obtenerNombreConductor($vale[0]["conductor_id"]);
 
@@ -40,8 +40,8 @@ use App\Controllers\ValesController;
     <div class="div-foto">
         <p># de placa: <?=$placa ?> </p>
         <p>Motorista: <?=$conductor ?></p>
-        <p>Tipo combustible: <?=$tipo_combustible ?> </p>
-        <p>Monto combustible: ($) <?=$monto_gasolina ?></p>
+        <p>Tipo de gasto: <?=$tipo_combustible ?> </p>
+        <p>Monto de gasto: ($) <?=$monto_gasolina ?></p>
         <?php if($nombre_imagen!=""): ?>
         <img src="<?= $ruta ?>" alt="<?= $nombre_imagen ?>">            
         <?php else: ?>

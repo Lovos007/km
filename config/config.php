@@ -331,10 +331,10 @@ function selectConductoresActivos($name, $vista, $conductor_id =0,$tipo_licencia
 {
     $condiciones = "estado = 1"; // Inicia con estado activo
     if ($tipo_licencia1 == 1) {
-        $condiciones = "tipo_licencia1= 1  AND estado= 1"; // Solo tipo 1 (MOTO) y estado 1
+        $condiciones = "(tipo_licencia1= 1  AND estado= 1) OR (tipo_licencia2= 1  AND estado= 1)"; // Solo tipo 1 (MOTO) y estado 1
     } else if ($tipo_licencia1 == 2) {
         // Tipos mayores a 1 y estado 1
-        $condiciones = "tipo_licencia1>1  AND estado= 1";  // Usamos la clave 'tipo >' explícitamente
+        $condiciones = "(tipo_licencia1 !=1  AND estado= 1) OR (tipo_licencia2 !=0 AND tipo_licencia2 !=1  AND estado= 1)";  // si en alguna licencia tiene un tipo licencia que no sea moto
     }
     $conductores = new ConductoresController();
     $lista = $conductores->getConductoresCondicion("",$condiciones);
@@ -392,7 +392,7 @@ function selectAuxiliaresActivos($name, $vista, $auxiliar_id =0)
                 $seleccionado = "";
             }
         }
-        echo "<option value='{$auxliar['auxliar_id']}' $seleccionado >{$auxliar['nombre']} </option>";
+        echo "<option value='{$auxliar['auxiliar_id']}' $seleccionado >{$auxliar['nombre']} </option>";
     }
     echo '</select>';
 

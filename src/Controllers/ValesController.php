@@ -255,8 +255,8 @@ class ValesController
     {
         if (
             empty($_POST['vale_id']) || empty($_POST['numero']) || empty($_POST['tipo_vehiculo_vale'])
-            || empty($_POST['kilometraje']) || empty($_POST['tipo_combustible']) || empty($_POST['cantidad_galones'])
-            || empty($_POST['gasolina']) || empty($_POST['fecha'])
+            || empty($_POST['kilometraje']) || empty($_POST['tipo_gasto']) || empty($_POST['cantidad'])
+            || empty($_POST['monto']) || empty($_POST['fecha'])
             || empty($_POST['vehiculo']) || empty($_POST['conductor'])
         ) {
 
@@ -279,11 +279,9 @@ class ValesController
         $auxiliar1 = $_POST['auxiliar1'] ?? null;
         $auxiliar2 = $_POST['auxiliar2'] ?? null;
         $kilometraje = $_POST['kilometraje'];
-        $tipo_combustible = $_POST['tipo_combustible'];
-        $cantidad_galones = $_POST['cantidad_galones'];
-        $monto_gasolina = $_POST['gasolina'] ?? null;
-        $monto_power = $_POST['power'] ?? null;
-        $monto_aceite = $_POST['aceite'] ?? null;
+        $tipo_gasto = $_POST['tipo_gasto'];
+        $cantidad = $_POST['cantidad'];
+        $monto = $_POST['monto'] ?? null;
         $fecha = $_POST['fecha'];
         $comentario = $_POST['comentario'] ?? null;
         $usuario_c = usuario_session();
@@ -294,7 +292,7 @@ class ValesController
         $placa = $vehiculo[0]["placa"];
         $km_actual = $vehiculo[0]["km_actual"];
 
-        if ($km_actual >= $kilometraje) {
+        if ($km_actual > $kilometraje) {
             $alerta = [
                 "tipo" => "simple",
                 "titulo" => "Ocurrió un error inesperado",
@@ -361,7 +359,7 @@ class ValesController
         if (isset($_FILES['fotografia']) && $_FILES['fotografia']["name"] != "") {
 
             $uploadDir = BASE_URL_ARCHIVOS;
-            $newFileName = $fecha . "_" . $placa . "_" . $numero . "_img_." . $fileExtension;
+            $newFileName = $fecha . "_" . $placa . "_" . $numero ."_".$tipo_gasto. "_img_." . $fileExtension;
             $uploadPath = $uploadDir . $newFileName;
 
             if (move_uploaded_file($_FILES['fotografia']['tmp_name'], $uploadPath)) {
@@ -386,11 +384,9 @@ class ValesController
             'conductor_id' => $conductor_id,
             'kilometraje' => $kilometraje,
             'kilometraje_anterior' => $km_actual,
-            'tipo_combustible' => $tipo_combustible,
-            'cantidad_galones' => $cantidad_galones,
-            'monto_gasolina' => $monto_gasolina,
-            'monto_power' => $monto_power,
-            'monto_aceite' => $monto_aceite,
+            'tipo_gasto' => $tipo_gasto,
+            'cantidad_gasto' => $cantidad,
+            'monto_gasto' => $monto,
             'auxiliar_id1' => $auxiliar1,
             'auxiliar_id2' => $auxiliar2,
             'ruta_foto' => $url_base_foto,
@@ -403,23 +399,13 @@ class ValesController
 
 
         if ($resultado > 0) {
-            $datoskm = [
-                'km_actual' => $kilometraje,
-                'km_anterior' => $km_actual,
-                'usuario_u' => usuario_session()
-            ];
-            $datos = $this->MainModel->limpiarArray($datoskm);
-            $filtrokm = ['vehiculo_id' => $vehiculo_id];
-
-
-            $this->MainModel->actualizar("vehiculos", $datos, $filtrokm);
-
-
+           
             $alerta = [
-                "tipo" => "recargar",
+                "tipo" => "simpleRedireccion",
                 "titulo" => "Detalle de vale",
-                "texto" => "El detalle del vale se guardo correctamente",
-                "icono" => "success"
+                "texto" => "se ingreso el detalle de vale correctamente.",
+                "icono" => "success",
+                "url" => BASE_URL . 'ingresoVale?d=' . base64_encode($vale_id).'&n=n'
             ];
         } else {
             $alerta = [
@@ -457,14 +443,8 @@ class ValesController
             return json_encode($alerta); // Retornar alerta en formato JSON
         }
 
-        $VehiculoController = new VehiculoController();
-        $vehiculo = $VehiculoController->getVehiculo($vehiculo_id);
-
-        $km_actual_vehiculo = $vehiculo[0]["km_actual"];
-        $km_anterior_vehiculo = $vehiculo[0]["km_anterior"];
-
-        $nuevo_km_actual = $km_actual_vehiculo - $diferencia_km;
-        $nuevo_km_anterior = $km_anterior_vehiculo - $diferencia_km;
+        $VehiculoController = new VehiculoController();           
+        
 
         $condiciones = [
             "vale_detalle_id" => $vale_detalle_id
@@ -480,23 +460,14 @@ class ValesController
 
                     }
                 }
-            }
-            $filtrokm = ['vehiculo_id' => $vehiculo_id];
-
-            $datoskm = [
-                'km_actual' => $nuevo_km_actual,
-                'km_anterior' => $nuevo_km_anterior,
-                'usuario_u' => usuario_session()
-            ];
-
-            $this->MainModel->actualizar("vehiculos", $datoskm, $filtrokm);
+            }           
 
             $alerta = [
                 "tipo" => "simpleRedireccion",
                 "titulo" => "vale modificado",
                 "texto" => "El detalle se borro",
                 "icono" => "success",
-                "url" => BASE_URL . 'detallesV?d=' . base64_encode($vale_id)
+                "url" => BASE_URL . 'ingresoVale?d=' . base64_encode($vale_id).'&n=n'
             ];
             return json_encode($alerta); // Retornar alerta en formato JSON    
 
@@ -513,10 +484,23 @@ class ValesController
 
 
         }
+    }
 
+    public function borrarTodosLosDetalles($vale_id){
+        $filtro=[
+            "vale_id"=> $vale_id
+        ];
+     $detalles_vale = $this->MainModel->consultar('vale_detalle',$filtro);
 
+     foreach ($detalles_vale as $detalle) {
+        $this->borrarDetalleVale($detalle["vale_detalle_id"]);
+     }
+      
+    }
+    public function TablaResumenVale($vale_id){
 
-
+        return $this->MainModel->TablaResumenVale($vale_id);
+        
     }
 
 

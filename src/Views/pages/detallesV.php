@@ -46,9 +46,10 @@ use App\Controllers\ValesController;
                     <th>Placa</th>
                     <th>Motorista</th>
                     <th>kilometraje</th>
-                    <th>Gasolina</th>
-                    <th>Power</th>
-                    <th>Aceite</th>
+                    <th>Tipo de gasto</th>
+                    <th>cantidad</th>
+                    
+                    
                     <th>Sumas ($)</th>
                     <th>Acciones</th>
                 </tr>
@@ -61,7 +62,7 @@ use App\Controllers\ValesController;
                 <?php else: ?>
 
                     <?php foreach ($lista as $valeDetalle): ?>
-                        <?php $suma = $valeDetalle["monto_gasolina"] + $valeDetalle["monto_power"] + $valeDetalle["monto_aceite"];
+                        <?php $suma = $valeDetalle["monto_gasto"]; 
                         $total = $total + $suma;
 
                         ?>
@@ -74,19 +75,17 @@ use App\Controllers\ValesController;
                             </td>
                             <td data-label="kilometraje"><?= htmlspecialchars($valeDetalle['kilometraje'], ENT_QUOTES, 'UTF-8') ?>
                             </td>
-                            <td data-label="Gasolina">($)<?= htmlspecialchars($valeDetalle['monto_gasolina'], ENT_QUOTES, 'UTF-8') ?>
+                            <td data-label="Tipo de gasto"><?= htmlspecialchars($valeDetalle['tipo_gasto'], ENT_QUOTES, 'UTF-8') ?>
                             </td>
-                            <td data-label="Power">($)<?= htmlspecialchars($valeDetalle['monto_power'], ENT_QUOTES, 'UTF-8') ?>
+                            <td data-label="Cantidad"><?= htmlspecialchars($valeDetalle['cantidad_gasto'], ENT_QUOTES, 'UTF-8') ?>
                             </td>
-                            <td data-label="Aceite">($)<?= htmlspecialchars($valeDetalle['monto_aceite'], ENT_QUOTES, 'UTF-8') ?>
+                            <td data-label="Gasolina">($) <?= htmlspecialchars($valeDetalle['monto_gasto'], ENT_QUOTES, 'UTF-8') ?>
                             </td>
-                            <td data-label="Sumas ($)"><?= htmlspecialchars("$ " . $suma, ENT_QUOTES, 'UTF-8') ?>
-                            </td>
+                            
+                            
                             </td>
                             <td data-label="Acciones" class="actions">
-                                <a
-                                    href="<?= BASE_URL . 'src/Views/ajax/valeAjax.php?bdv=' . base64_encode($valeDetalle['vale_detalle_id']) ?>">Borrar
-                                </a>
+                              
                                 <a
                                     href="<?= BASE_URL . 'imagenDetalle?id=' . base64_encode($valeDetalle['vale_detalle_id']) ?>">Imagen
                                 </a>
@@ -99,9 +98,12 @@ use App\Controllers\ValesController;
                     <tr>
                         <td> </td>
                         <td> </td>
+                        <td> </td>
+                        <td> </td>
 
                         <td>Total</td>
                         <td>($) <?= $total ?></td>
+                        <td> </td>
                     </tr>
 
                 <?php endif; ?>

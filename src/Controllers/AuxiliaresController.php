@@ -8,7 +8,7 @@ use App\Models\Database;
 
 final class AuxiliaresController
 {
-    
+
     private $MainModel;
 
     public function __construct()
@@ -17,11 +17,11 @@ final class AuxiliaresController
         $conexion = (new Database())->getConnection();
         $this->MainModel = new MainModel($conexion);
     }
-    public function getAuxiliares($search = '',$filtro=[])
+    public function getAuxiliares($search = '', $filtro = [])
     {
         if ($search == '') {
             // Si se encontró el perfiles, lo devuelve, de lo contrario, retorna un array vacío.
-            $auxiliares = $this->MainModel->consultar('auxiliares',$filtro);
+            $auxiliares = $this->MainModel->consultar('auxiliares', $filtro);
             return $auxiliares ? $auxiliares : [];
 
         } else {
@@ -30,11 +30,11 @@ final class AuxiliaresController
                     'nombre' => '%' . $search . '%',
                     'cargo' => '%' . $search . '%',
                     'empresa' => '%' . $search . '%'
-                    
-                ];
-                $datos = $this->MainModel->limpiarArray($datos);
 
-            $auxiliares = $this->MainModel->consultar('auxiliares', $datos," OR ");
+                ];
+            $datos = $this->MainModel->limpiarArray($datos);
+
+            $auxiliares = $this->MainModel->consultar('auxiliares', $datos, " OR ");
             return $auxiliares ? $auxiliares : [];
 
         }
@@ -48,7 +48,7 @@ final class AuxiliaresController
 
     public function crearAuxiliar()
     {
-        if (empty($_POST['nombre'])  || empty($_POST['empresa']))  {
+        if (empty($_POST['nombre']) || empty($_POST['apellido']) || empty($_POST['dui']) || empty($_POST['empresa'])) {
 
             $alerta = [
                 "tipo" => "simple",
@@ -60,26 +60,34 @@ final class AuxiliaresController
         }
 
         // Recibir datos del formulario
-        $nombre = $_POST['nombre'];        
+        $nombre = $_POST['nombre'];
+        $apellido = $_POST['apellido'];
+        $dui = $_POST['dui'];
+        $numero = $_POST['numero'] ?? null;
+        $correo = $_POST['correo'] ?? null;
         $cargo = $_POST['cargo'] ?? null;
         $empresa = $_POST['empresa'];
         $usuario_c = usuario_session();
         $estado = 1;
 
-    
+
         // Datos a insertar
         $datos = [
             'nombre' => $nombre,
+            'apellido' => $apellido,
+            'dui' => $dui,
+            'numero' => $numero,
+            'correo' => $correo,
             'cargo' => $cargo,
             'empresa' => $empresa,
             'estado' => $estado,
             'usuario_c' => $usuario_c
         ];
         $datos = $this->MainModel->limpiarArray($datos);
-    
+
         // Insertar en la base de datos
         $resultado = $this->MainModel->insertar("auxiliares", $datos);
-    
+
         if ($resultado > 0) {
             $alerta = [
                 "tipo" => "simpleRedireccion",
@@ -99,24 +107,25 @@ final class AuxiliaresController
         return json_encode($alerta);
     }
 
-    public function modificarEstadoAuxiliar($auxiliar_id){
+    public function modificarEstadoAuxiliar($auxiliar_id)
+    {
         $auxliar = $this->getAuxiliar($auxiliar_id);
-        
-        $estado = $auxliar[0]['estado'];
-         
-         $tabla='auxiliares';
-         
-         $filtro = ['auxiliar_id' => $auxiliar_id];
 
-         if ($estado > 0) {
+        $estado = $auxliar[0]['estado'];
+
+        $tabla = 'auxiliares';
+
+        $filtro = ['auxiliar_id' => $auxiliar_id];
+
+        if ($estado > 0) {
             $datos = [
                 'estado' => 0,
-                'usuario_u' => usuario_session()                
-            ];     
-            $datos = $this->MainModel->limpiarArray($datos);          
+                'usuario_u' => usuario_session()
+            ];
+            $datos = $this->MainModel->limpiarArray($datos);
 
-            $resultado = $this->MainModel->actualizar($tabla,$datos,$filtro);
-            if ($resultado>0){
+            $resultado = $this->MainModel->actualizar($tabla, $datos, $filtro);
+            if ($resultado > 0) {
                 $alerta = [
                     "tipo" => "simpleRedireccion",
                     "titulo" => "auxliar modificado",
@@ -125,7 +134,7 @@ final class AuxiliaresController
                     "url" => BASE_URL . 'auxiliares'
                 ];
 
-            }else{
+            } else {
                 $alerta = [
                     "tipo" => "simpleRedireccion",
                     "titulo" => "Ocurrio un error",
@@ -134,16 +143,16 @@ final class AuxiliaresController
                     "url" => BASE_URL . 'auxiliares'
                 ];
             }
-           
+
         } else {
             $datos = [
                 'estado' => 1,
-                'usuario_u' => usuario_session()               
-            ];    
+                'usuario_u' => usuario_session()
+            ];
             $datos = $this->MainModel->limpiarArray($datos);
 
-            $resultado = $this->MainModel->actualizar($tabla,$datos,$filtro);
-            if ($resultado>0){
+            $resultado = $this->MainModel->actualizar($tabla, $datos, $filtro);
+            if ($resultado > 0) {
                 $alerta = [
                     "tipo" => "simpleRedireccion",
                     "titulo" => "auxliar modificado",
@@ -152,7 +161,7 @@ final class AuxiliaresController
                     "url" => BASE_URL . 'auxiliares'
                 ];
 
-            }else{
+            } else {
                 $alerta = [
                     "tipo" => "simpleRedireccion",
                     "titulo" => "Ocurrio un error",
@@ -165,8 +174,12 @@ final class AuxiliaresController
         return json_encode($alerta); // Retornar alerta en formato JSON
     }
 
-    public function modificarAuxiliar(){
-        if (empty($_POST['nombre'])  || empty($_POST['empresa'])|| empty($_POST['auxiliar_id']))  {
+    public function modificarAuxiliar()
+    {
+        if (
+            empty($_POST['nombre']) || empty($_POST['apellido']) || empty($_POST['dui'])
+            || empty($_POST['empresa']) || empty($_POST['auxiliar_id'])
+        ) {
 
             $alerta = [
                 "tipo" => "simple",
@@ -179,26 +192,34 @@ final class AuxiliaresController
 
         // Recibir datos del formulario
 
-       $auxiliar_id = $_POST['auxiliar_id']; 
-       $nombre = $_POST['nombre'];        
-       $cargo = $_POST['cargo'] ?? null;
-       $empresa = $_POST['empresa'];
-       $usuario_u = usuario_session();
-       $estado = 1;
+        $auxiliar_id = $_POST['auxiliar_id'];
+        $nombre = $_POST['nombre'];
+        $apellido = $_POST['apellido'];
+        $dui = $_POST['dui'];
+        $numero = $_POST['numero'] ?? null;
+        $correo = $_POST['correo'] ?? null;
+        $cargo = $_POST['cargo'] ?? null;
+        $empresa = $_POST['empresa'];
+        $usuario_u = usuario_session();
+        $estado = 1;
 
-   
-       // Datos a insertar
-       $datos = [
-           'nombre' => $nombre,
-           'cargo' => $cargo,
-           'empresa' => $empresa,
-           'estado' => $estado,
-           'usuario_u' => $usuario_u
-       ];
-       $datos = $this->MainModel->limpiarArray($datos);
-        $filtro= ['auxiliar_id' => $auxiliar_id];
 
-        $resultado = $this->MainModel->actualizar('auxiliares',$datos,$filtro);
+        // Datos a modificar
+        $datos = [
+            'nombre' => $nombre,
+            'apellido' => $apellido,
+            'dui' => $dui,
+            'numero' => $numero,
+            'correo' => $correo,
+            'cargo' => $cargo,
+            'empresa' => $empresa,
+            'estado' => $estado,
+            'usuario_u' => $usuario_u
+        ];
+        $datos = $this->MainModel->limpiarArray($datos);
+        $filtro = ['auxiliar_id' => $auxiliar_id];
+
+        $resultado = $this->MainModel->actualizar('auxiliares', $datos, $filtro);
         // Verificar si la inserción fue exitosa
         if ($resultado != '') {
             $alerta = [
@@ -214,10 +235,10 @@ final class AuxiliaresController
 
 
 
-    
+
 
     }
 
 
-    
+
 }

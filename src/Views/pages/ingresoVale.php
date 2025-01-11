@@ -4,24 +4,24 @@ use App\Controllers\ValesController;
 
 <?php if (isset($_GET["d"])): ?>
     <?php
-
     $vale_id = base64_decode($_GET["d"]);
-
+    $nuevo =$_GET["n"];
     $vale = new ValesController();
     $vales = new ValesController();
 
+    if ($nuevo=="y") {
+     $vale->borrarTodosLosDetalles($vale_id);
+    }
+
     $vale = $vale->getVale($vale_id);
     $lista = $vales->getDetallesVale($vale_id);
-
     $total = 0;
-
     $numero = $vale[0]["numero"];
     $serie = $vale[0]["serie"];
     $responsable_id = $vale[0]["responsable_id"];
     $estado = $vale[0]["estado"];
 
     if ($estado != 1) {
-
         $alerta = [
             "tipo" => "simpleRedireccion",
             "titulo" => "Infraccion de seguridad",
@@ -33,16 +33,11 @@ use App\Controllers\ValesController;
         $alerta = json_encode($alerta);
         echo php_alerta_redireccionar($alerta);
     }
-
-
-
-
     ?>
     <div class="">
         <h2>ingresar detalles</h2>
         <form class="form-container FormularioAjax" id="userForm" enctype="multipart/form-data"
             action="<?= BASE_URL . 'src/Views/ajax/valeAjax.php' ?>" method="POST">
-
 
             <input type="hidden" name="modulo_detalle_vale" value="registrar">
             <input type="hidden" name="vale_id" value="<?= $vale_id ?>">
@@ -51,7 +46,6 @@ use App\Controllers\ValesController;
                 <label for="numero"># Vale</label>
                 <input type="text" id="numero" name="numero" placeholder="# vale" value="<?= $numero ?>" readonly required>
             </div>
-
             <div class="form-group">
                 <label for="tipo_vehiculo">Tipo Vehículo</label>
                 <select name="tipo_vehiculo_vale" id="tipo_vehiculo_vale" required>
@@ -60,39 +54,31 @@ use App\Controllers\ValesController;
                     <option value="2">AUTOS</option>
                 </select>
             </div>
-
             <div class="form-group" id="vehiculos-container">
-
             </div>
             <div class="form-group">
                 <label for="kilometraje">Kilometraje</label>
                 <input type="number" id="kilometraje" name="kilometraje" placeholder="Kilometraje actual" required>
             </div>
             <div class="form-group">
-                <label for="tipo_combustible">Tipo combustible</label>
-                <select name="tipo_combustible" id="tipo_combustible" required>
+                <label for="tipo_gasto">Tipo de Gasto</label>
+                <select name="tipo_gasto" id="tipo_gasto" required>
                     <option value="" selected>Seleccione</option>
-                    <option value="REGULAR">REGULAR</option>
-                    <option value="REGULAR">SUPER</option>
+                    <option value="REGULAR">GASOLINA REGULAR</option>
+                    <option value="SUPER">GASOLINA SUPER</option>
                     <option value="DIESEL">DIESEL</option>
+                    <option value="POWER">POWER</option>
+                    <option value="ACEITE">ACEITE</option>
                 </select>
             </div>
             <div class="form-group">
-                <label for="cantidad_galones">Cantidad de galones</label>
-                <input type="number" id="cantidad_galones" name="cantidad_galones" placeholder="Cantidad galones" required>
+                <label for="cantidad">Cantidad galones o cuartos</label>
+                <input type="text" id="cantidad" name="cantidad" placeholder="Cantidad galones u otra" required>
             </div>
             <div class="form-group-">
-                <label for="gasolina">Monto de gasolina</label>
-                <input type="number" id="gasolina" name="gasolina" placeholder="$ monto de gasolina" required>
-            </div>
-            <div class="form-group">
-                <label for="power">Monto power</label>
-                <input type="number" id="power" name="power" placeholder="$ monto de power">
-            </div>
-            <div class="form-group">
-                <label for="aceite">Monto aceite</label>
-                <input type="number" id="aceite" name="aceite" placeholder="$ monto de aceite">
-            </div>
+                <label for="monto">Monto de gasto</label>
+                <input type="text" id="monto" name="monto" placeholder="$ monto " required>
+            </div>            
             <div class="form-group">
                 <label for="fecha">Fecha</label>
                 <input type="date" id="fecha" name="fecha" required value="<?= $fecha_actual_corta ?>">
@@ -106,13 +92,15 @@ use App\Controllers\ValesController;
             <div class="form-group-comentario #form-group-comentario" id="comentario">
                 <label for="comentario">Comentarios:</label>
                 <textarea name="comentario" placeholder="  Escribe tus comentarios aquí..."></textarea>
-
             </div>
-
             <div class="form-group-submit">
                 <button type="submit">Guardar</button>
             </div>
-
+            <div class="form-group-submit">
+                <span style="color:red" >Nota: Si cierra esta ventana sin cerrar el vale, 
+                    toda la informacion ingresada se eliminara y comenzara el ingreso desde cero
+                </span>
+            </div>
             <div class="form-group-detalles">
                 <table id="userTable">
                     <thead>
@@ -120,7 +108,9 @@ use App\Controllers\ValesController;
                             <th>Placa</th>
                             <th>Motorista</th>
                             <th>kilometraje</th>
-                            <th>Sumas ($)</th>
+                            <th>Tipo de gasto</th>
+                            <th>Cantidad</th>
+                            <th>Monto</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -132,7 +122,7 @@ use App\Controllers\ValesController;
                         <?php else: ?>
 
                             <?php foreach ($lista as $valeDetalle): ?>
-                                <?php $suma = $valeDetalle["monto_gasolina"] + $valeDetalle["monto_power"] + $valeDetalle["monto_aceite"];
+                                <?php $suma = $valeDetalle["monto_gasto"] ;
                                 $total = $total + $suma;
 
                                 ?>
@@ -146,7 +136,13 @@ use App\Controllers\ValesController;
                                     <td data-label="kilometraje">
                                         <?= htmlspecialchars($valeDetalle['kilometraje'], ENT_QUOTES, 'UTF-8') ?>
                                     </td>
-                                    <td data-label="Sumas ($)"><?= htmlspecialchars("$ " . $suma, ENT_QUOTES, 'UTF-8') ?>
+                                    <td data-label="Tipo de gasto">
+                                        <?= htmlspecialchars($valeDetalle['tipo_gasto'], ENT_QUOTES, 'UTF-8') ?>
+                                    </td>
+                                    <td data-label="Cantidad">
+                                        <?= htmlspecialchars($valeDetalle['cantidad_gasto'], ENT_QUOTES, 'UTF-8') ?>
+                                    </td>
+                                    <td data-label="Sumas ($)"><?= htmlspecialchars("($) " . $suma, ENT_QUOTES, 'UTF-8') ?>
                                     </td>
                                     <td data-label="Acciones" class="actions">
                                         <a
@@ -158,10 +154,14 @@ use App\Controllers\ValesController;
                             <tr>
                                 <td> </td>
                                 <td> </td>
+                                <td> </td>
+                                <td> </td>
 
                                 <td>Total</td>
                                 <td>($) <?= $total ?></td>
-                                <td> </td>
+                                <td  class="actions"><a href="<?= BASE_URL . 'src/Views/ajax/valeAjax.php?datos=' .
+                                    base64_encode($vale_id) ?>">Cerrar Vale
+                                </a> </td>
                             </tr>
 
                         <?php endif; ?>

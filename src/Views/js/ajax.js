@@ -5,6 +5,7 @@ const formularios_ajax = document.querySelectorAll(".FormularioAjax");
 
 
 formularios_ajax.forEach(formularios => {
+    
 
     formularios.addEventListener("submit", function (e) {
 
