@@ -1,6 +1,8 @@
 <h2>Registrar vehiculo</h2>
 <div class="">
-    <form class="form-container FormularioAjax" id="userForm" action="<?= BASE_URL . 'src/Views/ajax/vehiculoAjax.php' ?>" method="POST">
+    <form class="form-container FormularioAjax" id="userForm"
+     action="<?= BASE_URL . 'src/Views/ajax/vehiculoAjax.php' ?>" method="POST"
+     enctype="multipart/form-data">
      
         <input type="hidden" name="modulo_vehiculo" value="registrar">
         
@@ -55,7 +57,11 @@
             <input type="text" id="ruta_fotos" name="ruta_fotos" placeholder="ruta_fotos">
         </div>
         <div class="form-group">
-            <label for="targeta_vence">Fecha de refrenda </label>
+            <label for="targeta_vence">Imagen de targeta de circulacion </label>
+            <input type="file" id="foto1" name="foto1" >
+        </div>
+        <div class="form-group">
+            <label for="targeta_vence">Fecha de proxima refrenda </label>
             <input type="date" id="targeta_vence" name="targeta_vence" >
         </div>
         <div class="form-group-submit">

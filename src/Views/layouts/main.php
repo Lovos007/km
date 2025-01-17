@@ -25,10 +25,12 @@
                 </ul>
             </li>
             <li>
-                <a href="#">Tareas</a>
+                <a href="#">Tareas varias</a>
                 <ul>
+                    <li><a href="<?= BASE_URL . 'uso-diario' ?>">Uso diario      </a></li>
                     <li><a href="<?= BASE_URL . 'vales' ?>">Vales      </a></li>
                     <li><a href="<?= BASE_URL . 'valesDetalle' ?>">Detalles de vale</a></li>
+                    <li><a href="<?= BASE_URL . 'valesDetalle2' ?>">Mover detalles</a></li>
                 </ul>
             </li>
             <li>

@@ -3,23 +3,30 @@ use App\Controllers\AuxiliaresController;
 use App\Controllers\MainController;
 use App\Controllers\perfilController;
 use App\Controllers\ResponsablesController;
+use App\Controllers\ValesController;
 use App\Controllers\VehiculoController;
 use App\Controllers\ConductoresController;
 
 
 define('BASE_URL', 'http://localhost/km/');
+
 define('BASE_URL_VISTA', 'http://localhost/');
-define('BASE_URL_ARCHIVOS', __DIR__.'/../src/Views/detalle_vales/'); 
-define('BASE_URL_ARCHIVOS_LICENCIAS', __DIR__.'/../src/Views/licencias/'); 
+define('BASE_URL_ARCHIVOS', __DIR__ . '/../src/Views/detalle_vales/');
+define('BASE_URL_ARCHIVOS_LICENCIAS', __DIR__ . '/../src/Views/licencias/');
+define('BASE_URL_ARCHIVOS_TARGETAS', __DIR__ . '/../src/Views/targetas_circulacion/');
 
 
 date_default_timezone_set('America/El_Salvador');
+define('FECHA_ACTUAL_CORTA', date('Y-m-d'));
 
 define('JS', '
  <script src="' . BASE_URL . 'src/Views/js/menu.js"></script> 
  <script src="' . BASE_URL . 'src/Views/js/sweetalert2.all.min.js"></script>
  <script src="' . BASE_URL . 'src/Views/js/ajax.js"></script>
 ');
+
+
+
 
 
 
@@ -80,7 +87,7 @@ function selectPerfiles($name, $vista, $perfil_id = 0)
 
     $perfiles = new perfilController();
     $lista = $perfiles->getPerfiles();
-    $seleccionado="";
+    $seleccionado = "";
     if ($perfil_id > 0) {
         $default = "";
     } else {
@@ -112,7 +119,7 @@ function selectTipoVehiculo($name, $vista, $tipo_vehiculo_id = 0)
 
     $tipos = new VehiculoController();
     $lista = $tipos->getTipoVehiculo();
-    $seleccionado="";
+    $seleccionado = "";
     if ($tipo_vehiculo_id > 0) {
         $default = "";
     } else {
@@ -146,8 +153,8 @@ function selectEmpresas($name, $vista, $nombre_empresa = "")
 
     $empresas = new MainController();
     $lista = $empresas->getEmpresas();
-    $seleccionado="";
-    if ($nombre_empresa !="" ) {
+    $seleccionado = "";
+    if ($nombre_empresa != "") {
         $default = "";
     } else {
         $default = "selected";
@@ -158,7 +165,7 @@ function selectEmpresas($name, $vista, $nombre_empresa = "")
                 <option value='' disabled $default>Selecciona </option>
                 ";
     foreach ($lista as $empresa) {
-        if ($nombre_empresa !="" ) {
+        if ($nombre_empresa != "") {
             if ($nombre_empresa == $empresa['nombre_empresa']) {
 
                 $seleccionado = "selected";
@@ -172,13 +179,13 @@ function selectEmpresas($name, $vista, $nombre_empresa = "")
     echo '</select>';
 
 }
-function selectTipoLicencia($name, $vista, $tipo_licencia_id =0)
+function selectTipoLicencia($name, $vista, $tipo_licencia_id = 0)
 {
 
     $licencias = new ConductoresController();
     $lista = $licencias->getTipoLicencia();
-    $seleccionado="";
-    if ($tipo_licencia_id >0 ) {
+    $seleccionado = "";
+    if ($tipo_licencia_id > 0) {
         $default = "";
     } else {
         $default = "selected";
@@ -189,7 +196,7 @@ function selectTipoLicencia($name, $vista, $tipo_licencia_id =0)
                 <option value='0'  $default>Selecciona </option>
                 ";
     foreach ($lista as $licencia) {
-        if ($tipo_licencia_id>0 ) {
+        if ($tipo_licencia_id > 0) {
             if ($tipo_licencia_id == $licencia['tipo_licencia_id']) {
 
                 $seleccionado = "selected";
@@ -204,49 +211,54 @@ function selectTipoLicencia($name, $vista, $tipo_licencia_id =0)
 
 }
 
-function obtenerTipoLicencia($id_tipo_licencia){
-    if ($id_tipo_licencia==0) {
+function obtenerTipoLicencia($id_tipo_licencia)
+{
+    if ($id_tipo_licencia == 0) {
         return "";
     }
-    
+
     $licencia = new ConductoresController();
     $resultado = $licencia->getTipoLicencia($id_tipo_licencia);
     return $resultado[0]['tipo_licencia'];
 
 }
-function obtenerPlaca($vehiculo_id){
-    if ($vehiculo_id==0) {
+function obtenerPlaca($vehiculo_id)
+{
+    if ($vehiculo_id == 0) {
         return "";
-    }    
+    }
     $vehiculo = new VehiculoController();
     $resultado = $vehiculo->getVehiculo($vehiculo_id);
     return $resultado[0]['placa'];
 }
-function obtenerNombreConductor($conductor_id){
-    if ($conductor_id==0) {
+function obtenerNombreConductor($conductor_id)
+{
+    if ($conductor_id == 0) {
         return "";
-    }    
+    }
     $conductor = new ConductoresController();
     $resultado = $conductor->getConductor($conductor_id);
     return $resultado[0]['nombre'];
 }
 
-function obtenerNombreResponsable($reponsable_id){
-    if ($reponsable_id==0 || $reponsable_id== ""  ) {
+function obtenerNombreResponsable($reponsable_id)
+{
+    if ($reponsable_id == 0 || $reponsable_id == "") {
         return "";
-    }    
+    }
     $responsable = new ResponsablesController();
     $resultado = $responsable->getResponsable($reponsable_id);
     return $resultado[0]['nombre'];
 }
 
-function obtenerEstadoVale($estado){
-    if ($estado==1) {
+function obtenerEstadoVale($estado)
+{
+    if ($estado == 1) {
         return "ACTIVO";
     }
     return "CERRADO";
 
-} 
+}
 
 
 // retornar id usuario de la sesion actual
@@ -256,13 +268,13 @@ function usuario_session()
     return $_SESSION['user_id'];
 }
 
-function selectResponsables($name, $vista, $reponsable_id =0)
+function selectResponsables($name, $vista, $reponsable_id = 0)
 {
 
     $responsables = new ResponsablesController();
     $lista = $responsables->getResponsables();
-    $seleccionado="";
-    if ($reponsable_id >0 ) {
+    $seleccionado = "";
+    if ($reponsable_id > 0) {
         $default = "";
     } else {
         $default = "selected";
@@ -273,7 +285,7 @@ function selectResponsables($name, $vista, $reponsable_id =0)
                 <option value='0'  $default>Selecciona </option>
                 ";
     foreach ($lista as $responsable) {
-        if ($reponsable_id>0 ) {
+        if ($reponsable_id > 0) {
             if ($reponsable_id == $responsable['responsable_id']) {
 
                 $seleccionado = "selected";
@@ -288,7 +300,7 @@ function selectResponsables($name, $vista, $reponsable_id =0)
 
 }
 
-function selectVehiculosActivos($name, $vista, $vehiculo_id =0,$tipo_vehiculo=0)
+function selectVehiculosActivos($name, $vista, $vehiculo_id = 0, $tipo_vehiculo = 0)
 {
     $condiciones = "estado = 1"; // Inicia con estado activo
 
@@ -299,9 +311,9 @@ function selectVehiculosActivos($name, $vista, $vehiculo_id =0,$tipo_vehiculo=0)
         $condiciones = "tipo>1  AND estado= 1";  // Usamos la clave 'tipo >' explícitamente
     }
     $vehiculos = new VehiculoController();
-    $lista = $vehiculos->getVehiculosCondicion("",$condiciones);
-    $seleccionado="";
-    if ($vehiculo_id >0 ) {
+    $lista = $vehiculos->getVehiculosCondicion("", $condiciones);
+    $seleccionado = "";
+    if ($vehiculo_id > 0) {
         $default = "";
     } else {
         $default = "selected";
@@ -312,7 +324,7 @@ function selectVehiculosActivos($name, $vista, $vehiculo_id =0,$tipo_vehiculo=0)
                 <option value='0'  $default>Selecciona </option>
                 ";
     foreach ($lista as $vehiculo) {
-        if ($vehiculo_id>0 ) {
+        if ($vehiculo_id > 0) {
             if ($vehiculo_id == $vehiculo_id['vehiculo_id']) {
 
                 $seleccionado = "selected";
@@ -327,7 +339,7 @@ function selectVehiculosActivos($name, $vista, $vehiculo_id =0,$tipo_vehiculo=0)
 
 }
 
-function selectConductoresActivos($name, $vista, $conductor_id =0,$tipo_licencia1=0)
+function selectConductoresActivos($name, $vista, $conductor_id = 0, $tipo_licencia1 = 0)
 {
     $condiciones = "estado = 1"; // Inicia con estado activo
     if ($tipo_licencia1 == 1) {
@@ -337,9 +349,9 @@ function selectConductoresActivos($name, $vista, $conductor_id =0,$tipo_licencia
         $condiciones = "(tipo_licencia1 !=1  AND estado= 1) OR (tipo_licencia2 !=0 AND tipo_licencia2 !=1  AND estado= 1)";  // si en alguna licencia tiene un tipo licencia que no sea moto
     }
     $conductores = new ConductoresController();
-    $lista = $conductores->getConductoresCondicion("",$condiciones);
-    $seleccionado="";
-    if ($conductor_id >0 ) {
+    $lista = $conductores->getConductoresCondicion("", $condiciones);
+    $seleccionado = "";
+    if ($conductor_id > 0) {
         $default = "";
     } else {
         $default = "selected";
@@ -350,7 +362,7 @@ function selectConductoresActivos($name, $vista, $conductor_id =0,$tipo_licencia
                 <option value='0'  $default>Selecciona </option>
                 ";
     foreach ($lista as $conductor) {
-        if ($conductor_id>0 ) {
+        if ($conductor_id > 0) {
             if ($conductor_id == $conductor['conductor_id']) {
 
                 $seleccionado = "selected";
@@ -365,14 +377,14 @@ function selectConductoresActivos($name, $vista, $conductor_id =0,$tipo_licencia
 
 }
 
-function selectAuxiliaresActivos($name, $vista, $auxiliar_id =0)
+function selectAuxiliaresActivos($name, $vista, $auxiliar_id = 0)
 {
     $condiciones = ["estado" => 1]; // Inicia con estado activo
-   
+
     $auxiliares = new AuxiliaresController();
-    $lista = $auxiliares->getAuxiliares("",$condiciones);
-    $seleccionado="";
-    if ($auxiliar_id >0 ) {
+    $lista = $auxiliares->getAuxiliares("", $condiciones);
+    $seleccionado = "";
+    if ($auxiliar_id > 0) {
         $default = "";
     } else {
         $default = "selected";
@@ -383,7 +395,7 @@ function selectAuxiliaresActivos($name, $vista, $auxiliar_id =0)
                 <option value='0'  $default>Selecciona </option>
                 ";
     foreach ($lista as $auxliar) {
-        if ($auxiliar_id>0 ) {
+        if ($auxiliar_id > 0) {
             if ($auxiliar_id == $auxliar['auxliar_id']) {
 
                 $seleccionado = "selected";
@@ -393,6 +405,49 @@ function selectAuxiliaresActivos($name, $vista, $auxiliar_id =0)
             }
         }
         echo "<option value='{$auxliar['auxiliar_id']}' $seleccionado >{$auxliar['nombre']} </option>";
+    }
+    echo '</select>';
+
+}
+
+function selectValesActivos($name, $vista, $vale_id = 0, $activos = 0)
+{
+
+
+    $vales = new ValesController();
+    $lista = $vales->getVales();
+    $seleccionado = "";
+    if ($vale_id > 0) {
+        $default = "";
+    } else {
+        $default = "selected";
+    }
+
+    echo " <label for='$name'>$vista</label>
+            <select id='$name' name='$name' >
+                <option value='0'  $default>Selecciona </option>
+                ";
+    foreach ($lista as $vale) {
+        if ($vale_id > 0) {
+            if ($vale_id == $vale['vale_id']) {
+
+                $seleccionado = "";
+
+            } else {
+                $seleccionado = "";
+            }
+        }
+        if ($activos > 0) {
+            if (1 == $vale['estado'] && $vale_id != $vale['vale_id'] ) {
+                echo "<option value='{$vale['vale_id']}' $seleccionado >{$vale['numero']} </option>";
+
+            }
+
+        } else {
+            echo "<option value='{$vale['vale_id']}' $seleccionado >{$vale['numero']} </option>";
+
+        }
+
     }
     echo '</select>';
 

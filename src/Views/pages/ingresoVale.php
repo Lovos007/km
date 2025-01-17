@@ -64,8 +64,8 @@ use App\Controllers\ValesController;
                 <label for="tipo_gasto">Tipo de Gasto</label>
                 <select name="tipo_gasto" id="tipo_gasto" required>
                     <option value="" selected>Seleccione</option>
-                    <option value="REGULAR">GASOLINA REGULAR</option>
-                    <option value="SUPER">GASOLINA SUPER</option>
+                    <option value="REGULAR">REGULAR</option>
+                    <option value="SUPER">SUPER</option>
                     <option value="DIESEL">DIESEL</option>
                     <option value="POWER">POWER</option>
                     <option value="ACEITE">ACEITE</option>

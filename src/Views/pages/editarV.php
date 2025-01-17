@@ -26,7 +26,18 @@ use App\Controllers\PermisoController;
     $km_actual =$vehiculo[0]["km_actual"];
     $km_anterior =$vehiculo[0]["km_anterior"];
     $ruta_fotos =$vehiculo[0]["ruta_fotos"];
+    $ruta_targeta =$vehiculo[0]["foto_targeta"];
     $targeta_vence =$vehiculo[0]["targeta_vence"];  
+
+    $ruta1 = BASE_URL . "src/Views/targetas_circulacion/" . $ruta_targeta;
+    
+    
+
+    if ($ruta_targeta!="") {
+        $imagen1= "<img class ='styled-image' src='$ruta1' alt='$ruta_targeta'>";          
+    }else{
+        $imagen1= "<p>No hay imagen</p>";         
+    }
     
     $PermisoController = new PermisoController();
     $permiso_motor= $PermisoController->getPermiso_SB(usuario_session(),80);
@@ -104,12 +115,20 @@ use App\Controllers\PermisoController;
             <input type="text" id="ruta_fotos" name="ruta_fotos" placeholder="ruta_fotos" value="<?=$ruta_fotos ?>">
         </div>
         <div class="form-group">
+            <label for="targeta_vence">Imagen de targeta de circulacion </label>
+            <input type="file" id="foto1" name="foto1" >
+        </div>
+        <div class="form-group">
             <label for="targeta_vence">Fecha de refrenda </label>
             <input type="date" id="targeta_vence" name="targeta_vence" value="<?=$targeta_vence ?>">
         </div>
         <div class="form-group-submit">
             <button type="submit">Actualizar</button>
         </div>
+        <div class="image-container">
+                <p>Licencia 1</p>
+                <?= $imagen1?>
+            </div>
     </form>
 </div>
 

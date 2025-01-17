@@ -11,6 +11,9 @@ if (isset($_POST['modulo_vale'])) {
 	 if($_POST['modulo_vale']=="modificar"){
 	 	echo $vale->modificarVale();
 	 }
+	 if($_POST['modulo_vale']=="mover_detalles"){
+		echo $vale->moverDetallesVale();
+	}
 }
 if (isset($_GET['datos'])) {
 	$id_vale =base64_decode($_GET["datos"]);

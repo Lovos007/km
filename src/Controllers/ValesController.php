@@ -269,7 +269,6 @@ class ValesController
             return json_encode($alerta);
         }
 
-
         // Recibir datos del formulario
         $vale_id = $_POST['vale_id'];
         $numero = $_POST['numero'];
@@ -501,6 +500,51 @@ class ValesController
 
         return $this->MainModel->TablaResumenVale($vale_id);
         
+    }
+
+    public function moverDetallesVale()
+    {
+        if (empty($_POST['numero'])|| empty($_POST['nuevovale']) || $_POST['nuevovale']<1 ||empty($_POST['vale_id'])) {
+
+            $alerta = [
+                "tipo" => "simple",
+                "titulo" => "Ocurrió un error inesperado",
+                "texto" => "No has llenado todos los campos que son obligatorios",
+                "icono" => "error"
+            ];
+            return json_encode($alerta);
+        }
+        $viejovaleid = $_POST['vale_id'];
+        $nuevovaleid = $_POST['nuevovale'];
+
+        $datos=[
+            "vale_id"=> $nuevovaleid
+        ];
+        $filtro=[
+            "vale_id"=> $viejovaleid
+        ];
+
+       $resultado= $this->MainModel->actualizar("vale_detalle",$datos,$filtro);
+       if ($resultado > 0) {
+        $alerta = [
+            "tipo" => "simpleRedireccion",
+            "titulo" => "vale modificado",
+            "texto" => "Los detalles se movieron",
+            "icono" => "success",
+            "url" => BASE_URL . 'valesDetalle2'
+        ];
+
+    } else {
+        $alerta = [
+            "tipo" => "simpleRedireccion",
+            "titulo" => "Ocurrio un error",
+            "texto" => "No se pudo modificar el vale, intente nuevamente.",
+            "icono" => "error",
+            "url" => BASE_URL . 'valesDetalle2'
+        ];
+    }
+    return json_encode($alerta); // Retornar alerta en formato JSON 
+    
     }
 
 

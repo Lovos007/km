@@ -123,6 +123,79 @@ final class VehiculoController
             ];
             return json_encode($alerta);
         }
+
+        if (isset($_FILES['foto1']) && $_FILES['foto1']["name"] != "") {
+            $mimeType = mime_content_type($_FILES['foto1']['tmp_name']);
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+            if (!in_array($mimeType, $allowedTypes)) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: Solo se permiten imágenes JPEG, PNG o GIF.",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+
+            }
+            $maxSize = 2 * 1024 * 1024; // 2 MB
+            if ($_FILES['foto1']['size'] > $maxSize) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: La imagen es demasiado grande. Tamaño máximo: 2 MB.",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+            }
+
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+            $fileExtension = pathinfo($_FILES['foto1']['name'], PATHINFO_EXTENSION);
+
+            if (!in_array(strtolower($fileExtension), $allowedExtensions)) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: Extensión de archivo no permitida.",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+            }
+
+            if (!getimagesize($_FILES['foto1']['tmp_name'])) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: El archivo no es una imagen válida.",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+
+            }
+
+        }
+
+        $url_base_foto1 = "";
+
+        if (isset($_FILES['foto1']) && $_FILES['foto1']["name"] != "") {
+
+            $uploadDir = BASE_URL_ARCHIVOS_TARGETAS;
+            $newFileName = $placa . "_img_." . $fileExtension;
+            $uploadPath = $uploadDir . $newFileName;
+
+            if (move_uploaded_file($_FILES['foto1']['tmp_name'], $uploadPath)) {
+                $url_base_foto1 = $newFileName;
+            } else {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "La imagen no se guardo",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+            }
+        }
+        // FIN VALIDACION DE IMAGEN  TARGETA DE CIRCULACION
     
         // Recibir datos del formulario
         $marca = $_POST['marca'];
@@ -158,6 +231,7 @@ final class VehiculoController
             'km_actual' => 0,
             'km_anterior' => 0,
             'ruta_fotos' => $ruta_fotos,
+            'foto_targeta' => $url_base_foto1,
             'targeta_vence' => $targeta_vence,
             'usuario_c' => $usuario_c
         ];
@@ -280,7 +354,84 @@ final class VehiculoController
                 return json_encode($alerta);
                 
             }
+            $sql_imagen1 = $placa_existe[0]['foto_targeta'];
       
+        }
+        
+        if (isset($_FILES['foto1']) && $_FILES['foto1']["name"] != "") {
+            $mimeType = mime_content_type($_FILES['foto1']['tmp_name']);
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+            if (!in_array($mimeType, $allowedTypes)) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: Solo se permiten imágenes JPEG, PNG o GIF.",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+
+            }
+            $maxSize = 2 * 1024 * 1024; // 2 MB
+            if ($_FILES['foto1']['size'] > $maxSize) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: La imagen es demasiado grande. Tamaño máximo: 2 MB.",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+            }
+
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+            $fileExtension = pathinfo($_FILES['foto1']['name'], PATHINFO_EXTENSION);
+
+            if (!in_array(strtolower($fileExtension), $allowedExtensions)) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: Extensión de archivo no permitida.",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+            }
+
+            if (!getimagesize($_FILES['foto1']['tmp_name'])) {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "Error: El archivo no es una imagen válida.",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+
+            }
+
+        }
+
+        $url_base_foto1 = "";
+
+        if (isset($_FILES['foto1']) && $_FILES['foto1']["name"] != "") {
+
+            $uploadDir = BASE_URL_ARCHIVOS_TARGETAS;
+            $newFileName = $placa . "_img_." . $fileExtension;
+            $uploadPath = $uploadDir . $newFileName;
+
+            if (move_uploaded_file($_FILES['foto1']['tmp_name'], $uploadPath)) {
+                $url_base_foto1 = $newFileName;
+            } else {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "La imagen no se guardo",
+                    "icono" => "error"
+                ];
+                return json_encode($alerta);
+            }
+        }
+        // FIN VALIDACION DE IMAGEN  TARGETA DE CIRCULACION
+        if ($url_base_foto1=="") {
+            $url_base_foto1=$sql_imagen1;
         }
 
         // Recibir datos del formulario
@@ -298,6 +449,7 @@ final class VehiculoController
         $n_vin = $_POST['n_vin'] ?? null;
         $clase = $_POST['clase'] ?? null;
         $ruta_fotos = $_POST['ruta_fotos'] ?? null;
+        
         $targeta_vence = $_POST['targeta_vence'] ?? null;
         $usuario_c = usuario_session();
 
@@ -316,6 +468,7 @@ final class VehiculoController
             'n_vin' => $n_vin,
             'clase' => $clase,
             'ruta_fotos' => $ruta_fotos,
+            'foto_targeta' => $url_base_foto1,
             'targeta_vence' => $targeta_vence,
             'usuario_u' => $usuario_c
         ];

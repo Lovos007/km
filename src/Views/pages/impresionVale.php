@@ -105,8 +105,8 @@ use App\Controllers\ValesController;
                     </th>
                 </tr>
                 <tr>
-                    <th style="text-align: center;">Tipo de gasto</th>
                     <th style="text-align: center;">Cantidad</th>
+                    <th style="text-align: center;">Tipo de gasto</th>                    
                     <th style="text-align: center;">Precio de unitario</th>
                     <th style="text-align: center;">Monto</th>
                 </tr>
@@ -119,8 +119,8 @@ use App\Controllers\ValesController;
                 <?php else: ?>
                     <?php foreach ($resumen as $tipo): ?>
                         <tr>
-                            <td style="text-align: center;" data-label="Tipo de gasto"><?= $tipo["tipo_gasto"] ?></td>
                             <td style="text-align: center;" data-label="Cantidad"><?= $tipo["cantidad"] ?></td>
+                            <td style="text-align: center;" data-label="Tipo de gasto"><?= $tipo["tipo_gasto"] ?></td>                           
                             <td style="text-align: center;" data-label="precio unitario"><?= number_format($tipo["precio_unitario"],2) ?></td>
                             <td style="text-align: center;" data-label="Total"><?= number_format($tipo["monto"],2) ?></td>
                         </tr>
