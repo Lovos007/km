@@ -93,6 +93,11 @@ class UsoDiarioController
     }
     $nuevo_km_actual = $kilometraje;
     $nuevo_km_anterior = $km_actual;
+
+    if($kilometraje==$km_actual){
+        $nuevo_km_anterior=$km_anterior;
+    }
+
     $datos=
     [
         "km_actual" => $nuevo_km_actual,
@@ -103,7 +108,7 @@ class UsoDiarioController
         "vehiculo_id" => $vehiculo_id 
     ];
     $resultado = $this->MainModel->actualizar("vehiculos",$datos,$filtro);
-    if ($resultado > 0) {
+    if ($resultado > 0 ) {
         $datos=[
             "vehiculo_id" => $vehiculo_id,
             "nuevo_km" => $kilometraje,
@@ -124,8 +129,8 @@ class UsoDiarioController
         if ($resultado > 0) {
             $alerta = [
                 "tipo" => "simpleRedireccion",
-                "titulo" => "Detalle de vale",
-                "texto" => "Se el uso diario correctamente.",
+                "titulo" => "Uso diario",
+                "texto" => "Se ingreso el uso diario correctamente.",
                 "icono" => "success",
                 "url" => BASE_URL . 'uso-diario' 
             ];
@@ -151,6 +156,66 @@ class UsoDiarioController
     return json_encode($alerta);
     
 
+    }
+
+    public function borrarUso($km_id){
+        $uso = $this->getUso($km_id);
+        $nuevo_km = $uso[0]["nuevo_km"];
+        $actual_km = $uso[0]["km_actual"];
+        
+        $vehiculo_id = $uso[0]["vehiculo_id"];
+        $diferencia_km = $nuevo_km - $actual_km;
+        $vehiculo = new VehiculoController();
+        $vehiculo = $vehiculo->getVehiculo($vehiculo_id);
+        $km_actual_vehiculo = $vehiculo[0]["km_actual"];
+        $km_anterior_vehiculo = $vehiculo[0]["km_anterior"];
+
+        $nuevo_km_actual_vehiculo = $km_actual_vehiculo - $diferencia_km;
+        $nuevo_km_anterior_vehiculo = $km_anterior_vehiculo - $diferencia_km;
+
+        $datos=
+        [
+            "km_actual" => $nuevo_km_actual_vehiculo,
+            "km_anterior" => $nuevo_km_anterior_vehiculo            
+        ];
+
+
+        $filtro=[
+            "vehiculo_id" => $vehiculo_id 
+        ];
+        $resultado = $this->MainModel->actualizar("vehiculos",$datos,$filtro);      
+
+        if ($resultado > 0  ) {
+            $filtro=[
+                "km_id" => $km_id 
+            ];
+            $resultado = $this->MainModel->eliminar("km",$filtro);
+            if ($resultado > 0) {
+                $alerta = [
+                    "tipo" => "simpleRedireccion",
+                    "titulo" => "Uso diario",
+                    "texto" => "Se elimino uso diario correctamente.",
+                    "icono" => "success",
+                    "url" => BASE_URL . 'uso-diario' 
+                ];
+            } else {
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "no se elimino el registro en la tabla km",
+                    "icono" => "error"
+                ];               
+                
+            }
+        } else {
+            $alerta = [
+                "tipo" => "simple",
+                "titulo" => "Ocurrió un error inesperado",
+                "texto" => "no se modifico el km de la tabla vehiculo",
+                "icono" => "error"
+            ];
+        }
+        return json_encode($alerta);
     }
 
 }

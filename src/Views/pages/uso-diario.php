@@ -43,13 +43,34 @@ $lista = $UsoController->getUsos($search);
 
                 <?php foreach ($lista as $uso): ?>
                     <tr>
-                        <td data-label="Placa"><?= htmlspecialchars(obtenerPlaca($uso['vehiculo_id']), ENT_QUOTES, 'UTF-8') ?></td>
-                        <td data-label="Motorista"><?= htmlspecialchars(obtenerNombreConductor($uso['conductor_id']), ENT_QUOTES, 'UTF-8') ?></td>
-                        <td data-label="Motorista"><?= htmlspecialchars($uso['tipo_uso'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td data-label="Motorista"><?= htmlspecialchars($uso['fecha_uso'], ENT_QUOTES, 'UTF-8') ?></td>
-                        
+                        <td data-label="Placa"><?= htmlspecialchars(obtenerPlaca($uso['vehiculo_id']), ENT_QUOTES, 'UTF-8') ?>
+                        </td>
+                        <td data-label="Motorista">
+                            <?= htmlspecialchars(
+                                obtenerNombreConductor($uso['conductor_id']),
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>
+                        </td>
+                        <td data-label="Motorista">
+                            <?= htmlspecialchars(
+                                $uso['tipo_uso'],
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>
+                        </td>
+                        <td data-label="Motorista">
+                            <?= htmlspecialchars(
+                                $uso['fecha_uso'],
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>
+                        </td>
+
                         <td data-label="Acciones" class="actions">
-                            <a href="<?= BASE_URL . 'usoAjax?b=' . base64_encode($uso['km_id']) ?>">Borrar </a>
+                            <a href="<?= BASE_URL . 'src/Views/ajax/usoAjax.php?b=' .
+                                base64_encode($uso['km_id']) ?>">Borrar
+                            </a>
                         </td>
 
                     </tr>

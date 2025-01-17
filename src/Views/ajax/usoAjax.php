@@ -24,10 +24,9 @@ if (isset($_POST['modulo_uso_diario'])) {
 }
 
 if (isset($_GET['b'])) {
-
 	$km_id =base64_decode($_GET["b"]);
 	$uso = new UsoDiarioController();
 
-	//echo php_alerta_redireccionar($uso->borrar($km_id));
+	echo php_alerta_redireccionar($uso->borrarUso($km_id));
 
 }
