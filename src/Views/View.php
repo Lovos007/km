@@ -18,7 +18,7 @@ class View
             
             if ($template!= "/login") {
 
-                if ($template!= "impresionVale"){
+                if ($template!= "impresionVale" &&  $template!= "reporte-u-d" ){
                     
                     include __DIR__ . '/layouts/main.php';
                    

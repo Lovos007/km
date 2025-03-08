@@ -31,7 +31,7 @@ $lista = $UsoController->getUsos($search);
                 <th>Motorista</th>
                 <th>Tipo de uso</th>
                 <th>Fecha</th>
-                <th>Acciones</th>
+                <th colspan="2">Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -66,11 +66,35 @@ $lista = $UsoController->getUsos($search);
                                 'UTF-8'
                             ) ?>
                         </td>
-
-                        <td data-label="Acciones" class="actions">
-                            <a href="<?= BASE_URL . 'src/Views/ajax/usoAjax.php?b=' .
+                        <td data-label="Acciones" class="actions" >
+                            <?php if($uso['finalizado']==0): ?>
+                                <a href="<?= BASE_URL . 'src/Views/ajax/usoAjax.php?b=' .
                                 base64_encode($uso['km_id']) ?>">Borrar
                             </a>
+                                
+                            <?php else: ?>
+                                
+                            <?php endif; ?>
+
+
+                            
+
+                        </td>
+                        <td data-label="Acciones" class="actions">
+
+                            <?php if($uso['finalizado']==0): ?>
+                                <a href="<?= BASE_URL . 'src/Views/ajax/usoAjax.php?f=' .
+                                base64_encode($uso['km_id']) ?>">Finalizar
+                            </a>
+                                
+                            <?php else: ?>                               
+                                <a href="#">Finalizado
+                            </a>
+                                
+                            <?php endif; ?>
+
+                            
+
                         </td>
 
                     </tr>

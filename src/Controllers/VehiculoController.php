@@ -16,12 +16,42 @@ final class VehiculoController
         $this->MainModel = new MainModel($conexion);
     }
 
-    public function getVehiculos($search = '', $condiciones = [])
+    // public function getVehiculos($search = '', $condiciones = [])
+    // {
+    //     if ($search === '') {
+    //         // Si no hay búsqueda, filtra solo por las condiciones adicionales.
+    //         $vehiculos = $this->MainModel->consultar('vehiculos', $condiciones);
+    //         return $vehiculos ?: []; // Retorna el resultado o un array vacío.
+    //     } else {
+    //         // Prepara los datos para la búsqueda con operadores LIKE
+    //         $datos = [
+    //             'placa' => '%' . $search . '%',
+    //             'marca' => '%' . $search . '%',
+    //             'modelo' => '%' . $search . '%',
+    //             'color' => '%' . $search . '%',
+    //             'anio' => '%' . $search . '%',
+    //             'empresa' => '%' . $search . '%'
+    //         ];
+    
+    //         // Limpia el array de datos
+    //         $datos = $this->MainModel->limpiarArray($datos);
+    
+    //         // Realiza la consulta con el operador OR
+    //         $vehiculos = $this->MainModel->consultar('vehiculos', $datos, " OR ");
+    //         return $vehiculos ?: []; // Retorna el resultado o un array vacío.
+    //     }
+    // }
+
+    public function getVehiculos($search = '', $condiciones = [], $pagina = 1, $registrosPorPagina = 10)
     {
+        // Calcular el offset
+        $offset = ($pagina - 1) * $registrosPorPagina;
+        $limit = "LIMIT $offset, $registrosPorPagina";
+    
         if ($search === '') {
             // Si no hay búsqueda, filtra solo por las condiciones adicionales.
-            $vehiculos = $this->MainModel->consultar('vehiculos', $condiciones);
-            return $vehiculos ?: []; // Retorna el resultado o un array vacío.
+            $vehiculos = $this->MainModel->consultar('vehiculos', $condiciones, " AND ", '', $limit);
+            $totalRegistros = $this->MainModel->contarRegistros('vehiculos', $condiciones);
         } else {
             // Prepara los datos para la búsqueda con operadores LIKE
             $datos = [
@@ -36,11 +66,18 @@ final class VehiculoController
             // Limpia el array de datos
             $datos = $this->MainModel->limpiarArray($datos);
     
-            // Realiza la consulta con el operador OR
-            $vehiculos = $this->MainModel->consultar('vehiculos', $datos, " OR ");
-            return $vehiculos ?: []; // Retorna el resultado o un array vacío.
+            // Realiza la consulta con el operador OR y paginación
+            $vehiculos = $this->MainModel->consultar('vehiculos', $datos, " OR ", '', $limit);
+            $totalRegistros = $this->MainModel->contarRegistros('vehiculos', $datos, " OR ");
         }
+    
+        // Retorna los resultados y el total de registros
+        return [
+            'resultados' => $vehiculos ?: [],
+            'totalRegistros' => $totalRegistros
+        ];
     }
+
     
     public function getVehiculosCondicion($search = '',$condiciones="")
     {

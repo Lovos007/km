@@ -9,9 +9,9 @@ use App\Controllers\ValesController;
     $vale = new ValesController();
     $vales = new ValesController();
 
-    if ($nuevo=="y") {
-     $vale->borrarTodosLosDetalles($vale_id);
-    }
+    // if ($nuevo=="y") {
+    //  $vale->borrarTodosLosDetalles($vale_id);
+    // }
 
     $vale = $vale->getVale($vale_id);
     $lista = $vales->getDetallesVale($vale_id);
@@ -97,9 +97,9 @@ use App\Controllers\ValesController;
                 <button type="submit">Guardar</button>
             </div>
             <div class="form-group-submit">
-                <span style="color:red" >Nota: Si cierra esta ventana sin cerrar el vale, 
+                <!-- <span style="color:red" >Nota: Si cierra esta ventana sin cerrar el vale, 
                     toda la informacion ingresada se eliminara y comenzara el ingreso desde cero
-                </span>
+                </span> -->
             </div>
             <div class="form-group-detalles">
                 <table id="userTable">
@@ -194,6 +194,8 @@ use App\Controllers\ValesController;
             // Enviar la solicitud con el tipo de vehículo
             xhr.send('tipo_vehiculo_vale=' + encodeURIComponent(tipoVehiculo));
         });
+
+        
     </script>
 
 

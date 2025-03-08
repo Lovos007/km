@@ -126,7 +126,7 @@ use App\Controllers\PermisoController;
             <button type="submit">Actualizar</button>
         </div>
         <div class="image-container">
-                <p>Licencia 1</p>
+                <p>Tarjeta </p>
                 <?= $imagen1?>
             </div>
     </form>

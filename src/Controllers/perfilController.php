@@ -71,6 +71,25 @@ class perfilController
         
         $usuario_id = usuario_session();
         $estado = 0;
+        // INICIO DE PERMISO
+        $permiso = new PermisoController();
+        //PERMISO ID 7  CREAR PERFILES
+        $numero_permiso = 7;
+        $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $nombre_perfil, 1);
+        // SI NO TIENE PERMISO
+
+        if ($v_permiso == false) {
+            $alerta = [
+                "tipo" => "simpleRedireccion",
+                "titulo" => "Error de permisos",
+                "texto" => "Necesitas el permiso # " . $numero_permiso,
+                "icono" => "error",
+                "url" => BASE_URL . 'perfil'
+            ];
+            return json_encode($alerta); // Terminar ejecución con alerta de error
+
+        }
+        // FIN DE PERMISO
 
         // verificar que el perfil no exista
         $perfil_existe = $this->MainModel->consultar('perfiles', ['nombre_perfil' => $nombre_perfil]);
@@ -86,6 +105,7 @@ class perfilController
             return json_encode($alerta); // Terminar ejecución con alerta de error
 
         }
+        // 
         $resultado = $this->MainModel->agregarPerfil($nombre_perfil, $usuario_id, $estado);
 
         // Verificar si la inserción fue exitosa
@@ -122,6 +142,26 @@ class perfilController
         // verificar que el perfil no exista
         $perfil_existe = $this->MainModel->consultar('perfiles', ['nombre_perfil' => $nombre_perfil]);
         $perfil_existe = count($perfil_existe);
+
+         // INICIO DE PERMISO
+         $permiso = new PermisoController();
+         //PERMISO ID 9  MODIFICAR NOMBRE PERFILES
+         $numero_permiso = 9;
+         $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $nombre_perfil, 1);
+         // SI NO TIENE PERMISO
+ 
+         if ($v_permiso == false) {
+             $alerta = [
+                 "tipo" => "simpleRedireccion",
+                 "titulo" => "Error de permisos",
+                 "texto" => "Necesitas el permiso # " . $numero_permiso,
+                 "icono" => "error",
+                 "url" => BASE_URL . 'perfil'
+             ];
+             return json_encode($alerta); // Terminar ejecución con alerta de error
+ 
+         }
+         // FIN DE PERMISO
 
         if ($perfil_existe > 0) {
             $alerta = [
@@ -171,6 +211,28 @@ class perfilController
         $estado = $perfil[0]['estado'];
          $tabla='perfiles_permisos';         
          $filtro = ['perfil_id' => $perfil_id,'permiso_id'=>$permiso_id];
+
+
+
+          // INICIO DE PERMISO
+        $permiso = new PermisoController();
+        //PERMISO ID 9  CREAR PERFILES
+        $numero_permiso = 9;
+        $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, "perfil id: ".$perfil_id." Permiso id: ".$permiso_id, 1);
+        // SI NO TIENE PERMISO
+
+        if ($v_permiso == false) {
+            $alerta = [
+                "tipo" => "simpleRedireccion",
+                "titulo" => "Error de permisos",
+                "texto" => "Necesitas el permiso # " . $numero_permiso,
+                "icono" => "error",
+                "url" => BASE_URL . 'perfil'
+            ];
+            return json_encode($alerta); // Terminar ejecución con alerta de error
+
+        }
+        // FIN DE PERMISO
 
          if ($estado > 0) {
             $datos = [

@@ -15,27 +15,59 @@ final class ConductoresController
         $this->MainModel = new MainModel($conexion);
     }
 
-    public function getConductores($search = '')
-    {
-        if ($search == '') {
-            // Si se encontró el perfiles, lo devuelve, de lo contrario, retorna un array vacío.
-            $conductores = $this->MainModel->consultar('conductores');
-            return $conductores ? $conductores : [];
+    // public function getConductores($search = '')
+    // {
+    //     if ($search == '') {
+    //         // Si se encontró el perfiles, lo devuelve, de lo contrario, retorna un array vacío.
+    //         $conductores = $this->MainModel->consultar('conductores');
+    //         return $conductores ? $conductores : [];
 
-        } else {
-            $datos =
-                [
-                    'nombre' => '%' . $search . '%',
-                    'dui' => '%' . $search . '%',
-                    'empresa' => '%' . $search . '%'
-                ];
-            $datos = $this->MainModel->limpiarArray($datos);
+    //     } else {
+    //         $datos =
+    //             [
+    //                 'nombre' => '%' . $search . '%',
+    //                 'dui' => '%' . $search . '%',
+    //                 'empresa' => '%' . $search . '%'
+    //             ];
+    //         $datos = $this->MainModel->limpiarArray($datos);
 
-            $conductores = $this->MainModel->consultar('conductores', $datos, " OR ");
-            return $conductores ? $conductores : [];
+    //         $conductores = $this->MainModel->consultar('conductores', $datos, " OR ");
+    //         return $conductores ? $conductores : [];
 
-        }
+    //     }
+    // }
+    public function getConductores($search = '', $condiciones = [], $pagina = 1, $registrosPorPagina = 10)
+{
+    // Calcular el offset
+    $offset = ($pagina - 1) * $registrosPorPagina;
+    $limit = "LIMIT $offset, $registrosPorPagina";
+
+    if ($search === '') {
+        // Si no hay búsqueda, filtra solo por las condiciones adicionales.
+        $conductores = $this->MainModel->consultar('conductores', $condiciones, " AND ", '', $limit);
+        $totalRegistros = $this->MainModel->contarRegistros('conductores', $condiciones);
+    } else {
+        // Prepara los datos para la búsqueda con operadores LIKE
+        $datos = [
+            'nombre' => '%' . $search . '%',
+            'dui' => '%' . $search . '%',
+            'empresa' => '%' . $search . '%'
+        ];
+
+        // Limpia el array de datos
+        $datos = $this->MainModel->limpiarArray($datos);
+
+        // Realiza la consulta con el operador OR y paginación
+        $conductores = $this->MainModel->consultar('conductores', $datos, " OR ", '', $limit);
+        $totalRegistros = $this->MainModel->contarRegistros('conductores', $datos, " OR ");
     }
+
+    // Retorna los resultados y el total de registros
+    return [
+        'resultados' => $conductores ?: [],
+        'totalRegistros' => $totalRegistros
+    ];
+}
     public function getConductoresCondicion($search = '', $condiciones = "")
     {
         if ($search == '') {

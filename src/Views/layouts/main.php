@@ -15,6 +15,7 @@
     <nav>
         <ul class="menu">
             <li><a href="<?= BASE_URL . 'home' ?>">Inicio</a></li>
+            <li><a href="<?= BASE_URL . 'valesFast' ?>">Llenar vales</a></li>
             <li>
                 <a href="#">Mantenimiento</a>
                 <ul>
@@ -31,6 +32,12 @@
                     <li><a href="<?= BASE_URL . 'vales' ?>">Vales      </a></li>
                     <li><a href="<?= BASE_URL . 'valesDetalle' ?>">Detalles de vale</a></li>
                     <li><a href="<?= BASE_URL . 'valesDetalle2' ?>">Mover detalles</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">Reporteria</a>
+                <ul>
+                    <li><a href="<?= BASE_URL . 'reporte-uso-diario' ?>">Uso diario</a></li>                    
                 </ul>
             </li>
             <li>

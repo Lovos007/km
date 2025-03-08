@@ -1,7 +1,10 @@
 <?php
 
 use App\Controllers\perfilController;
+use App\Controllers\PermisoController;
 
+$PermisoController= new PermisoController();
+$PermisoController->getPermiso(usuario_session(),6,"");
 
 // Obtener el término de búsqueda desde la URL
 $search = isset($_GET['search_encrypted']) ? base64_decode($_GET['search_encrypted']) : ''; // Decodificar

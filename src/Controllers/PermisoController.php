@@ -41,6 +41,8 @@ class PermisoController
 
     }
 
+    // solo retorna si tiene o no tiene el permiso
+
     public function getPermiso_SB($usuario_id, $permiso_id)
     {
         $permiso = $this->userModel->obtenerPermiso($usuario_id, $permiso_id);

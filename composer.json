@@ -2,7 +2,9 @@
     "name": "lalov/km",
     "description": "Proyecto KM",
     "type": "project",
-    "require": {},
+    "require": {
+        "phpoffice/phpspreadsheet": "3.8"
+    },
     "autoload": {
         "psr-4": {
             "App\\": "src/"

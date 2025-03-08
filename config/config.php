@@ -18,6 +18,7 @@ define('BASE_URL_ARCHIVOS_TARGETAS', __DIR__ . '/../src/Views/targetas_circulaci
 
 date_default_timezone_set('America/El_Salvador');
 define('FECHA_ACTUAL_CORTA', date('Y-m-d'));
+define('FECHA_ACTUAL_VISTA', date('d m Y'));
 
 define('JS', '
  <script src="' . BASE_URL . 'src/Views/js/menu.js"></script> 
@@ -300,9 +301,15 @@ function selectResponsables($name, $vista, $reponsable_id = 0)
 
 }
 
-function selectVehiculosActivos($name, $vista, $vehiculo_id = 0, $tipo_vehiculo = 0)
+function selectVehiculosActivos($name, $vista, $vehiculo_id = 0, $tipo_vehiculo = 0,$requerido="SI")
 {
     $condiciones = "estado = 1"; // Inicia con estado activo
+    
+    if ($requerido=="NO") {
+        $requerido="";
+    }else{
+        $requerido="required";
+    }
 
     if ($tipo_vehiculo == 1) {
         $condiciones = "tipo= 1  AND estado= 1"; // Solo tipo 1 (MOTO) y estado 1
@@ -320,7 +327,7 @@ function selectVehiculosActivos($name, $vista, $vehiculo_id = 0, $tipo_vehiculo 
     }
 
     echo " <label for='$name'>$vista</label>
-            <select id='$name' name='$name' required >
+            <select id='$name' name='$name' $requerido >
                 <option value='0'  $default>Selecciona </option>
                 ";
     foreach ($lista as $vehiculo) {
@@ -339,9 +346,14 @@ function selectVehiculosActivos($name, $vista, $vehiculo_id = 0, $tipo_vehiculo 
 
 }
 
-function selectConductoresActivos($name, $vista, $conductor_id = 0, $tipo_licencia1 = 0)
+function selectConductoresActivos($name, $vista, $conductor_id = 0, $tipo_licencia1 = 0, $requerido="SI")
 {
     $condiciones = "estado = 1"; // Inicia con estado activo
+    if ($requerido=="NO") {
+        $requerido="";
+    }else{
+        $requerido="required";
+    }
     if ($tipo_licencia1 == 1) {
         $condiciones = "(tipo_licencia1= 1  AND estado= 1) OR (tipo_licencia2= 1  AND estado= 1)"; // Solo tipo 1 (MOTO) y estado 1
     } else if ($tipo_licencia1 == 2) {
@@ -358,7 +370,7 @@ function selectConductoresActivos($name, $vista, $conductor_id = 0, $tipo_licenc
     }
 
     echo " <label for='$name'>$vista</label>
-            <select id='$name' name='$name' required>
+            <select id='$name' name='$name' $requerido>
                 <option value='0'  $default>Selecciona </option>
                 ";
     foreach ($lista as $conductor) {

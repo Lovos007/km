@@ -116,44 +116,122 @@ class MainModel
     }
 
 
-    public function consultar($tabla, $condiciones = [], $condicional = " AND ", $orderby = '')
-    {
-        $condicionesString = "";
-        $parametros = []; // Para almacenar los parámetros correctamente
+    // public function consultar($tabla, $condiciones = [], $condicional = " AND ", $orderby = '')
+    // {
+    //     $condicionesString = "";
+    //     $parametros = []; // Para almacenar los parámetros correctamente
 
-        if (!empty($condiciones)) {
-            $condicionesString = "WHERE " . implode($condicional, array_map(function ($columna) use (&$parametros, $condiciones) {
-                $valor = $condiciones[$columna];
+    //     if (!empty($condiciones)) {
+    //         $condicionesString = "WHERE " . implode($condicional, array_map(function ($columna) use (&$parametros, $condiciones) {
+    //             $valor = $condiciones[$columna];
 
-                // Si el valor contiene '%', se usa LIKE
-                if (strpos($valor, '%') !== false) {
-                    $parametros[$columna] = $valor;
-                    return "$columna LIKE :$columna";
-                }
+    //             // Si el valor contiene '%', se usa LIKE
+    //             if (strpos($valor, '%') !== false) {
+    //                 $parametros[$columna] = $valor;
+    //                 return "$columna LIKE :$columna";
+    //             }
 
-                // Si no, se usa "=" por defecto
+    //             // Si no, se usa "=" por defecto
+    //             $parametros[$columna] = $valor;
+    //             return "$columna = :$columna";
+    //         }, array_keys($condiciones)));
+    //     }
+
+    //     // Si no hay condiciones, no poner el "WHERE"
+    //     $sql = "SELECT * FROM $tabla" . ($condicionesString ? " $condicionesString" : "") . " $orderby";
+
+    //     $stmt = $this->conexion->prepare($sql);
+
+    //     // Vincula los parámetros usando el array limpio
+    //     foreach ($parametros as $columna => $valor) {
+    //         $stmt->bindValue(":$columna", $valor, PDO::PARAM_STR);
+    //     }
+
+    //     try {
+    //         $stmt->execute();
+    //         return $stmt->fetchAll(PDO::FETCH_ASSOC); // Retorna los resultados como un array asociativo
+    //     } catch (PDOException $e) {
+    //         die("Error al consultar: " . $e->getMessage());
+    //     }
+    // }
+
+    public function contarRegistros($tabla, $condiciones = [], $condicional = " AND ")
+{
+    $condicionesString = "";
+    $parametros = []; // Para almacenar los parámetros correctamente
+
+    if (!empty($condiciones)) {
+        $condicionesString = "WHERE " . implode($condicional, array_map(function ($columna) use (&$parametros, $condiciones) {
+            $valor = $condiciones[$columna];
+
+            // Si el valor contiene '%', se usa LIKE
+            if (strpos($valor, '%') !== false) {
                 $parametros[$columna] = $valor;
-                return "$columna = :$columna";
-            }, array_keys($condiciones)));
-        }
+                return "$columna LIKE :$columna";
+            }
 
-        // Si no hay condiciones, no poner el "WHERE"
-        $sql = "SELECT * FROM $tabla" . ($condicionesString ? " $condicionesString" : "") . " $orderby";
-
-        $stmt = $this->conexion->prepare($sql);
-
-        // Vincula los parámetros usando el array limpio
-        foreach ($parametros as $columna => $valor) {
-            $stmt->bindValue(":$columna", $valor, PDO::PARAM_STR);
-        }
-
-        try {
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC); // Retorna los resultados como un array asociativo
-        } catch (PDOException $e) {
-            die("Error al consultar: " . $e->getMessage());
-        }
+            // Si no, se usa "=" por defecto
+            $parametros[$columna] = $valor;
+            return "$columna = :$columna";
+        }, array_keys($condiciones)));
     }
+
+    // Si no hay condiciones, no poner el "WHERE"
+    $sql = "SELECT COUNT(*) as total FROM $tabla" . ($condicionesString ? " $condicionesString" : "");
+
+    $stmt = $this->conexion->prepare($sql);
+
+    // Vincula los parámetros usando el array limpio
+    foreach ($parametros as $columna => $valor) {
+        $stmt->bindValue(":$columna", $valor, PDO::PARAM_STR);
+    }
+
+    try {
+        $stmt->execute();
+        return $stmt->fetchColumn(); // Retorna el total de registros
+    } catch (PDOException $e) {
+        die("Error al contar registros: " . $e->getMessage());
+    }
+}
+
+    public function consultar($tabla, $condiciones = [], $condicional = " AND ", $orderby = '', $limit = '')
+{
+    $condicionesString = "";
+    $parametros = []; // Para almacenar los parámetros correctamente
+
+    if (!empty($condiciones)) {
+        $condicionesString = "WHERE " . implode($condicional, array_map(function ($columna) use (&$parametros, $condiciones) {
+            $valor = $condiciones[$columna];
+
+            // Si el valor contiene '%', se usa LIKE
+            if (strpos($valor, '%') !== false) {
+                $parametros[$columna] = $valor;
+                return "$columna LIKE :$columna";
+            }
+
+            // Si no, se usa "=" por defecto
+            $parametros[$columna] = $valor;
+            return "$columna = :$columna";
+        }, array_keys($condiciones)));
+    }
+
+    // Si no hay condiciones, no poner el "WHERE"
+    $sql = "SELECT * FROM $tabla" . ($condicionesString ? " $condicionesString" : "") . " $orderby $limit";
+
+    $stmt = $this->conexion->prepare($sql);
+
+    // Vincula los parámetros usando el array limpio
+    foreach ($parametros as $columna => $valor) {
+        $stmt->bindValue(":$columna", $valor, PDO::PARAM_STR);
+    }
+
+    try {
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC); // Retorna los resultados como un array asociativo
+    } catch (PDOException $e) {
+        die("Error al consultar: " . $e->getMessage());
+    }
+}
 
     public function consultarConCondiciones($tabla, $condiciones = '', $orderby = '')
     {
