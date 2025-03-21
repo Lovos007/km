@@ -148,6 +148,26 @@ final class VehiculoController
         $placa = $_POST['placa'];
         $usuario_id = usuario_session();
         $estado = 1;
+
+        // INICIO DE PERMISO
+        $permiso = new PermisoController();
+        //PERMISO ID 11  CREAR vehivulo
+        $numero_permiso = 11;
+        $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $placa, 1);
+        // SI NO TIENE PERMISO
+
+        if ($v_permiso == false) {
+            $alerta = [
+                "tipo" => "simpleRedireccion",
+                "titulo" => "Error de permisos",
+                "texto" => "Necesitas el permiso # " . $numero_permiso,
+                "icono" => "error",
+                "url" => BASE_URL . 'home'
+            ];
+            return json_encode($alerta); // Terminar ejecución con alerta de error
+
+        }
+        // FIN DE PERMISO
     
         // Verificar que la placa no exista
         $placa_existe = $this->MainModel->consultar('vehiculos', ['placa' => $placa]);
@@ -302,6 +322,29 @@ final class VehiculoController
         
         $estado = $vehiculo[0]['estado'];
         $placa = $vehiculo[0]['placa'];
+
+
+ // INICIO DE PERMISO
+ $permiso = new PermisoController();
+ //PERMISO ID 13  modificar estado del vehiculo
+ $numero_permiso = 13;
+ $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $placa, 1);
+ // SI NO TIENE PERMISO
+
+
+ if ($v_permiso == false) {
+    $alerta = [
+        "tipo" => "simpleRedireccion",
+        "titulo" => "Error de permisos",
+        "texto" => "Necesitas el permiso # " . $numero_permiso,
+        "icono" => "error",
+        "url" => BASE_URL . 'home'
+    ];
+    return json_encode($alerta); // Terminar ejecución con alerta de error
+
+}
+// FIN DE PERMISO
+
          
          $tabla='vehiculos';
          
@@ -364,6 +407,8 @@ final class VehiculoController
         return json_encode($alerta); // Retornar alerta en formato JSON
     }
 
+    // modificar vehivulo
+
     public function modificarVehiculo(){
         if (empty($_POST['placa']) || empty($_POST['marca']) || empty($_POST['modelo']) || empty($_POST['año']) || empty($_POST['color']) || empty($_POST['tipo_vehiculo'])
         || empty($_POST['empresa']) || empty($_POST['vehiculo_id'])) {
@@ -375,8 +420,31 @@ final class VehiculoController
             ];
             return json_encode($alerta);
         }
+
         $placa= $_POST['placa']; 
         $vehiculo_id= $_POST['vehiculo_id'];  
+
+
+ // INICIO DE PERMISO
+ $permiso = new PermisoController();
+ //PERMISO ID 12  modificar vehiculo
+ $numero_permiso = 12;
+ $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $placa, 1);
+ // SI NO TIENE PERMISO
+
+
+ if ($v_permiso == false) {
+    $alerta = [
+        "tipo" => "simpleRedireccion",
+        "titulo" => "Error de permisos",
+        "texto" => "Necesitas el permiso # " . $numero_permiso,
+        "icono" => "error",
+        "url" => BASE_URL . 'home'
+    ];
+    return json_encode($alerta); // Terminar ejecución con alerta de error
+
+}
+// FIN DE PERMISO
 
         // Verificar que la placa no exista
         $placa_existe = $this->MainModel->consultar('vehiculos', ['placa' => $placa]);

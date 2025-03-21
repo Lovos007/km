@@ -23,6 +23,7 @@
 <?php
 
 use App\Controllers\ConductoresController;
+use App\Controllers\PermisoController;
 
 // Obtener el término de búsqueda desde la URL
 $search = isset($_GET['search']) ? $_GET['search'] : '';
@@ -30,6 +31,35 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
 // Obtener el número de página desde la URL
 $pagina = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 $registrosPorPagina = 5;
+
+// INICIO DE PERMISO
+$permiso = new PermisoController();
+
+
+
+
+
+// PERMISO ID 14 VER VEHICULOS
+$numero_permiso = 14;
+$v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, 'N/A');
+
+// SI NO TIENE PERMISO
+if ($v_permiso == false) {
+    $alerta = [
+        "tipo" => "simpleRedireccion",
+        "titulo" => "Error de permisos",
+        "texto" => "Necesitas el permiso # " . $numero_permiso,
+        "icono" => "error",
+        "url" => BASE_URL . 'perfil'
+    ];
+    return json_encode($alerta); // Terminar ejecución con alerta de error
+}
+// FIN DE PERMISO
+
+
+
+
+
 
 // Obtener los datos paginados
 $conductores = new ConductoresController();

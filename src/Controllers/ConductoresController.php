@@ -138,10 +138,34 @@ final class ConductoresController
                 "texto" => "Selecciona un tipo de licencia 1",
                 "icono" => "error"
             ];
+
             return json_encode($alerta);
         }
 
         $dui = $_POST['dui'];
+
+
+
+        // INICIO DE PERMISO
+ $permiso = new PermisoController();
+ //PERMISO ID 15  modificar estado del vehiculo
+ $numero_permiso = 15;
+ $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $dui, 1);
+ // SI NO TIENE PERMISO
+
+
+ if ($v_permiso == false) {
+    $alerta = [
+        "tipo" => "simpleRedireccion",
+        "titulo" => "Error de permisos",
+        "texto" => "Necesitas el permiso # " . $numero_permiso,
+        "icono" => "error",
+        "url" => BASE_URL . 'home'
+    ];
+    return json_encode($alerta); // Terminar ejecución con alerta de error
+
+}
+// FIN DE PERMISO
 
 
 
@@ -366,11 +390,42 @@ final class ConductoresController
         $conductor = $this->getConductor($conductor_id);
 
         $estado = $conductor[0]['estado'];
-        $placa = $conductor[0]['dui'];
+        $dui = $conductor[0]['dui'];
 
+        $nombre = $conductor[0]['nombre'];
+        $apellido = $conductor[0]['apellido'];
+
+        $referencia = $dui ." ".$nombre." ".$apellido;
         $tabla = 'conductores';
 
         $filtro = ['conductor_id' => $conductor_id];
+
+
+
+  // INICIO DE PERMISO
+  $permiso = new PermisoController();
+  //PERMISO ID 17  modificar estado del vehiculo
+  $numero_permiso = 17;
+  $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $referencia, 1);
+  // SI NO TIENE PERMISO
+ 
+ 
+  if ($v_permiso == false) {
+     $alerta = [
+         "tipo" => "simpleRedireccion",
+         "titulo" => "Error de permisos",
+         "texto" => "Necesitas el permiso # " . $numero_permiso,
+         "icono" => "error",
+         "url" => BASE_URL . 'home'
+     ];
+     return json_encode($alerta); // Terminar ejecución con alerta de error
+ 
+ }
+ // FIN DE PERMISO
+
+
+
+
 
         if ($estado > 0) {
             $datos = [
@@ -453,6 +508,29 @@ final class ConductoresController
         }
 
         $dui = $_POST['dui'];
+
+
+
+            // INICIO DE PERMISO
+ $permiso = new PermisoController();
+ //PERMISO ID 16  modificar estado del vehiculo
+ $numero_permiso = 16;
+ $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $dui, 1);
+ // SI NO TIENE PERMISO
+
+
+ if ($v_permiso == false) {
+    $alerta = [
+        "tipo" => "simpleRedireccion",
+        "titulo" => "Error de permisos",
+        "texto" => "Necesitas el permiso # " . $numero_permiso,
+        "icono" => "error",
+        "url" => BASE_URL . 'home'
+    ];
+    return json_encode($alerta); // Terminar ejecución con alerta de error
+
+}
+// FIN DE PERMISO
 
         // Verificar que el dui del conductor no exista
         $conductor_existe = $this->MainModel->consultar('conductores', ['dui' => $dui]);

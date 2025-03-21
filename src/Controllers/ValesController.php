@@ -546,6 +546,23 @@ class ValesController
     return json_encode($alerta); // Retornar alerta en formato JSON 
     
     }
+    
+    public function enviarValeCorreo(){
+        $controller = new MainController();
+        $respuesta = $controller->enviarCorreo(
+    'llovos@surtimarcas.com.sv',
+    'Notificacion Importante ',
+    '
+    <h3>Este es un mensaje de prueba.</h3>
+    
+    
+    '
+               );
+      return ($respuesta);
+
+    }
+
+
 
 
 

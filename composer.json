@@ -3,7 +3,8 @@
     "description": "Proyecto KM",
     "type": "project",
     "require": {
-        "phpoffice/phpspreadsheet": "3.8"
+        "phpoffice/phpspreadsheet": "3.8",
+        "phpmailer/phpmailer": "^6.9"
     },
     "autoload": {
         "psr-4": {

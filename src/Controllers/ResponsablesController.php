@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controllers;
+use App\Controllers\PermisoController;
 use App\Models\MainModel;
 use App\Models\Database;
 
@@ -88,6 +89,27 @@ final class ResponsablesController
         ];
         $datos = $this->MainModel->limpiarArray($datos);
 
+
+  // INICIO DE PERMISO
+  $permiso = new PermisoController();
+  //PERMISO ID 21  modificar estado del vehiculo
+  $numero_permiso = 21;
+  $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $dui, 1);
+  // SI NO TIENE PERMISO
+ 
+ 
+  if ($v_permiso == false) {
+     $alerta = [
+         "tipo" => "simpleRedireccion",
+         "titulo" => "Error de permisos",
+         "texto" => "Necesitas el permiso # " . $numero_permiso,
+         "icono" => "error",
+         "url" => BASE_URL . 'home'
+     ];
+     return json_encode($alerta); // Terminar ejecución con alerta de error
+ 
+ }
+ // FIN DE PERMISO
         // Insertar en la base de datos
         $resultado = $this->MainModel->insertar("responsables", $datos);
 
@@ -177,6 +199,10 @@ final class ResponsablesController
         return json_encode($alerta); // Retornar alerta en formato JSON
     }
 
+
+
+
+
     public function modificarResponsable()
     {
         if (empty($_POST['nombre']) || empty($_POST['apellido']) || empty($_POST['dui']) || empty($_POST['empresa']) || empty($_POST['responsable_id'])) {
@@ -242,3 +268,5 @@ final class ResponsablesController
 
 
 }
+
+

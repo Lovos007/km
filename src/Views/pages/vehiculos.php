@@ -22,7 +22,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
 $permiso = new PermisoController();
 
 // PERMISO ID 10 VER VEHICULOS
-$numero_permiso = 11;
+$numero_permiso = 10;
 $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, 'N/A');
 
 // SI NO TIENE PERMISO

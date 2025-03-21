@@ -4,8 +4,6 @@ namespace App\Controllers;
 use App\Models\MainModel;
 use App\Models\Database;
 
-
-
 final class AuxiliaresController
 {
 
@@ -17,29 +15,62 @@ final class AuxiliaresController
         $conexion = (new Database())->getConnection();
         $this->MainModel = new MainModel($conexion);
     }
-    public function getAuxiliares($search = '', $filtro = [])
-    {
-        if ($search == '') {
-            // Si se encontró el perfiles, lo devuelve, de lo contrario, retorna un array vacío.
-            $auxiliares = $this->MainModel->consultar('auxiliares', $filtro);
-            return $auxiliares ? $auxiliares : [];
+    // public function getAuxiliares($search = '', $filtro = [])
+    // {
+    //     if ($search == '') {
+    //         // Si se encontró el perfiles, lo devuelve, de lo contrario, retorna un array vacío.
+    //         $auxiliares = $this->MainModel->consultar('auxiliares', $filtro);
+    //         return $auxiliares ? $auxiliares : [];
 
-        } else {
-            $datos =
-                [
-                    'nombre' => '%' . $search . '%',
-                    'cargo' => '%' . $search . '%',
-                    'empresa' => '%' . $search . '%'
+    //     } else {
+    //         $datos =
+    //             [
+    //                 'nombre' => '%' . $search . '%',
+    //                 'cargo' => '%' . $search . '%',
+    //                 'empresa' => '%' . $search . '%'
 
-                ];
-            $datos = $this->MainModel->limpiarArray($datos);
+    //             ];
+    //         $datos = $this->MainModel->limpiarArray($datos);
 
-            $auxiliares = $this->MainModel->consultar('auxiliares', $datos, " OR ");
-            return $auxiliares ? $auxiliares : [];
+    //         $auxiliares = $this->MainModel->consultar('auxiliares', $datos, " OR ");
+    //         return $auxiliares ? $auxiliares : [];
 
-        }
+    //     }
 
+    // }
+
+    public function getAuxiliares($search = '', $filtro = [], $pagina = 1, $registrosPorPagina = 10)
+{
+    // Calcular el offset
+    $offset = ($pagina - 1) * $registrosPorPagina;
+    $limit = "LIMIT $offset, $registrosPorPagina";
+
+    if ($search === '') {
+        // Si no hay búsqueda, filtra solo por las condiciones adicionales.
+        $auxiliares = $this->MainModel->consultar('auxiliares', $filtro, " AND ", '', $limit);
+        $totalRegistros = $this->MainModel->contarRegistros('auxiliares', $filtro);
+    } else {
+        // Prepara los datos para la búsqueda con operadores LIKE
+        $datos = [
+            'nombre' => '%' . $search . '%',
+            'cargo' => '%' . $search . '%',
+            'empresa' => '%' . $search . '%'
+        ];
+
+        // Limpia el array de datos
+        $datos = $this->MainModel->limpiarArray($datos);
+
+        // Realiza la consulta con el operador OR y paginación
+        $auxiliares = $this->MainModel->consultar('auxiliares', $datos, " OR ", '', $limit);
+        $totalRegistros = $this->MainModel->contarRegistros('auxiliares', $datos, " OR ");
     }
+
+    // Retorna los resultados y el total de registros
+    return [
+        'resultados' => $auxiliares ?: [],
+        'totalRegistros' => $totalRegistros
+    ];
+}
     public function getAuxiliar($auxiliar_id)
     {
         return $auxiliar = $this->MainModel->consultar('auxiliares', ['auxiliar_id' => $auxiliar_id]);
@@ -69,6 +100,30 @@ final class AuxiliaresController
         $empresa = $_POST['empresa'];
         $usuario_c = usuario_session();
         $estado = 1;
+
+
+
+
+        // INICIO DE PERMISO
+  $permiso = new PermisoController();
+  //PERMISO ID 18  modificar estado del vehiculo
+  $numero_permiso = 18;
+  $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $dui, 1);
+  // SI NO TIENE PERMISO
+ 
+ 
+  if ($v_permiso == false) {
+     $alerta = [
+         "tipo" => "simpleRedireccion",
+         "titulo" => "Error de permisos",
+         "texto" => "Necesitas el permiso # " . $numero_permiso,
+         "icono" => "error",
+         "url" => BASE_URL . 'home'
+     ];
+     return json_encode($alerta); // Terminar ejecución con alerta de error
+ 
+ }
+ // FIN DE PERMISO
 
 
         // Datos a insertar
@@ -114,6 +169,30 @@ final class AuxiliaresController
         $estado = $auxliar[0]['estado'];
 
         $tabla = 'auxiliares';
+
+
+
+
+         // INICIO DE PERMISO
+         $permiso = new PermisoController();
+         //PERMISO ID 20  modificar estado del vehiculo
+         $numero_permiso = 20;
+         $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $estado, 1);
+         // SI NO TIENE PERMISO
+        
+        
+         if ($v_permiso == false) {
+            $alerta = [
+                "tipo" => "simpleRedireccion",
+                "titulo" => "Error de permisos",
+                "texto" => "Necesitas el permiso # " . $numero_permiso,
+                "icono" => "error",
+                "url" => BASE_URL . 'home'
+            ];
+            return json_encode($alerta); // Terminar ejecución con alerta de error
+        
+        }
+        // FIN DE PERMISO
 
         $filtro = ['auxiliar_id' => $auxiliar_id];
 
@@ -202,6 +281,28 @@ final class AuxiliaresController
         $empresa = $_POST['empresa'];
         $usuario_u = usuario_session();
         $estado = 1;
+
+
+        // INICIO DE PERMISO
+        $permiso = new PermisoController();
+        //PERMISO ID 19  modificar estado del vehiculo
+        $numero_permiso = 19;
+        $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $dui, 1);
+        // SI NO TIENE PERMISO
+       
+       
+        if ($v_permiso == false) {
+           $alerta = [
+               "tipo" => "simpleRedireccion",
+               "titulo" => "Error de permisos",
+               "texto" => "Necesitas el permiso # " . $numero_permiso,
+               "icono" => "error",
+               "url" => BASE_URL . 'home'
+           ];
+           return json_encode($alerta); // Terminar ejecución con alerta de error
+       
+       }
+       // FIN DE PERMISO
 
 
         // Datos a modificar
