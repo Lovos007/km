@@ -18,43 +18,105 @@ class ValesController
         $this->MainModel = new MainModel($conexion);
     }
 
-    public function getVales($search = '')
-    {
-        if ($search == '') {
-            $vales = $this->MainModel->consultar('vales', [], " AND ", " ORDER BY fecha_c desc");
-            return $vales ? $vales : [];
+    // public function getVales($search = '')
+    // {
+    //     if ($search == '') {
+    //         $vales = $this->MainModel->consultar('vales', [], " AND ", " ORDER BY fecha_c desc");
+    //         return $vales ? $vales : [];
 
-        } else {
-            $datos =
-                [
-                    'numero' => '%' . $search . '%',
-                    'serie' => '%' . $search . '%'
-                ];
-            $datos = $this->MainModel->limpiarArray($datos);
-            $vales = $this->MainModel->consultar('vales', $datos, " OR ");
-            return $vales ? $vales : [];
+    //     } else {
+    //         $datos =
+    //             [
+    //                 'numero' => '%' . $search . '%',
+    //                 'serie' => '%' . $search . '%'
+    //             ];
+    //         $datos = $this->MainModel->limpiarArray($datos);
+    //         $vales = $this->MainModel->consultar('vales', $datos, " OR ");
+    //         return $vales ? $vales : [];
 
-        }
+    //     }
+    // }
+    // public function getValesDetalles($search = '')
+    // {
+    //     if ($search == '') {
+    //         $vales = $this->MainModel->consultar('vales', ["estado" => 1], " AND ", " ORDER BY fecha_c desc ");
+    //         return $vales ? $vales : [];
+
+    //     } else {
+    //         $datos =
+    //             [
+    //                 'numero' => '%' . $search . '%',
+    //                 'serie' => '%' . $search . '%',
+    //                 'estado' => 1
+    //             ];
+    //         $datos = $this->MainModel->limpiarArray($datos);
+    //         $vales = $this->MainModel->consultar('vales', $datos, " OR ");
+    //         return $vales ? $vales : [];
+
+    //     }
+    // }
+
+    public function getVales($search = '', $pagina = 1, $registrosPorPagina = 10)
+{
+    // Calcular el offset
+    $offset = ($pagina - 1) * $registrosPorPagina;
+    $limit = "LIMIT $offset, $registrosPorPagina";
+
+    if ($search === '') {
+        // Si no hay búsqueda, consulta con paginación
+        $vales = $this->MainModel->consultar('vales', [], " AND ", " ORDER BY fecha_c DESC ", $limit);
+        $totalRegistros = $this->MainModel->contarRegistros('vales', []);
+    } else {
+        // Datos para la búsqueda
+        $datos = [
+            'numero' => '%' . $search . '%',
+            'serie' => '%' . $search . '%'
+        ];
+        $datos = $this->MainModel->limpiarArray($datos);
+
+        // Consulta con búsqueda y paginación
+        $vales = $this->MainModel->consultar('vales', $datos, " OR ", " ORDER BY fecha_c DESC ", $limit);
+        $totalRegistros = $this->MainModel->contarRegistros('vales', $datos, " OR ");
     }
-    public function getValesDetalles($search = '')
-    {
-        if ($search == '') {
-            $vales = $this->MainModel->consultar('vales', ["estado" => 1], " AND ", " ORDER BY fecha_c desc ");
-            return $vales ? $vales : [];
 
-        } else {
-            $datos =
-                [
-                    'numero' => '%' . $search . '%',
-                    'serie' => '%' . $search . '%',
-                    'estado' => 1
-                ];
-            $datos = $this->MainModel->limpiarArray($datos);
-            $vales = $this->MainModel->consultar('vales', $datos, " OR ");
-            return $vales ? $vales : [];
+    return [
+        'resultados' => $vales ?: [],
+        'totalRegistros' => $totalRegistros
+    ];
+}
 
-        }
+public function getValesDetalles($search = '', $pagina = 1, $registrosPorPagina = 10)
+{
+    // Calcular el offset
+    $offset = ($pagina - 1) * $registrosPorPagina;
+    $limit = "LIMIT $offset, $registrosPorPagina";
+
+    if ($search === '') {
+        // Si no hay búsqueda, consulta con filtro de estado y paginación
+        $filtro = ["estado" => 1];
+        $vales = $this->MainModel->consultar('vales', $filtro, " AND ", " ORDER BY fecha_c DESC ", $limit);
+        $totalRegistros = $this->MainModel->contarRegistros('vales', $filtro);
+    } else {
+        // Datos para la búsqueda con estado fijo en 1
+        $datos = [
+            'numero' => '%' . $search . '%',
+            'serie' => '%' . $search . '%',
+            'estado' => 1
+        ];
+        $datos = $this->MainModel->limpiarArray($datos);
+
+        // Consulta con búsqueda y paginación
+        $vales = $this->MainModel->consultar('vales', $datos, " OR ", " ORDER BY fecha_c DESC ", $limit);
+        $totalRegistros = $this->MainModel->contarRegistros('vales', $datos, " OR ");
     }
+
+    return [
+        'resultados' => $vales ?: [],
+        'totalRegistros' => $totalRegistros
+    ];
+}
+
+
     public function getVale($vale_id)
     {
         return $vale = $this->MainModel->consultar('vales', ['vale_id' => $vale_id]);
@@ -102,7 +164,30 @@ class ValesController
             'estado' => $estado,
             'usuario_c' => $usuario_c
         ];
+
+
         $datos = $this->MainModel->limpiarArray($datos);
+
+        // INICIO DE PERMISO
+        $permiso = new PermisoController();
+        //PERMISO ID 27  crear vale
+        $numero_permiso = 27;
+        $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $numero, 1);
+        // SI NO TIENE PERMISO
+
+
+        if ($v_permiso == false) {
+            $alerta = [
+                "tipo" => "simpleRedireccion",
+                "titulo" => "Error de permisos",
+                "texto" => "Necesitas el permiso # " . $numero_permiso,
+                "icono" => "error",
+                "url" => BASE_URL . 'vales'
+            ];
+            return json_encode($alerta); // Terminar ejecución con alerta de error
+
+        }
+        // FIN DE PERMISO
 
         // Insertar en la base de datos
         $resultado = $this->MainModel->insertar("vales", $datos);
@@ -161,6 +246,27 @@ class ValesController
         $datos = $this->MainModel->limpiarArray($datos);
         $filtro = $this->MainModel->limpiarArray($filtro);
 
+        // INICIO DE PERMISO
+        $permiso = new PermisoController();
+        //PERMISO ID 29  modificar vale
+        $numero_permiso = 29;
+        $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $numero, 1);
+        // SI NO TIENE PERMISO
+
+
+        if ($v_permiso == false) {
+            $alerta = [
+                "tipo" => "simpleRedireccion",
+                "titulo" => "Error de permisos",
+                "texto" => "Necesitas el permiso # " . $numero_permiso,
+                "icono" => "error",
+                "url" => BASE_URL . 'vales'
+            ];
+            return json_encode($alerta); // Terminar ejecución con alerta de error
+
+        }
+        // FIN DE PERMISO
+
         // actualizar en la base de datos
         $resultado = $this->MainModel->actualizar("vales", $datos, $filtro);
 
@@ -194,12 +300,36 @@ class ValesController
 
         $filtro = ['vale_id' => $vale_id];
 
+
+
         if ($estado == 1) {
             $datos = [
                 'estado' => 2,
                 'usuario_u' => usuario_session()
             ];
             $datos = $this->MainModel->limpiarArray($datos);
+            // INICIO DE PERMISO
+            $permiso = new PermisoController();
+            //PERMISO ID 30  cerrar vale
+            $numero_permiso = 30;
+            $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $vale_id, 1);
+            // SI NO TIENE PERMISO
+
+
+            if ($v_permiso == false) {
+                $alerta = [
+                    "tipo" => "simpleRedireccion",
+                    "titulo" => "Error de permisos",
+                    "texto" => "Necesitas el permiso # " . $numero_permiso,
+                    "icono" => "error",
+                    "url" => BASE_URL . 'vales'
+                ];
+                return json_encode($alerta); // Terminar ejecución con alerta de error
+
+            }
+            // FIN DE PERMISO
+
+
 
             $resultado = $this->MainModel->actualizar($tabla, $datos, $filtro);
             if ($resultado > 0) {
@@ -222,6 +352,27 @@ class ValesController
             }
 
         } else {
+
+            // INICIO DE PERMISO
+            $permiso = new PermisoController();
+            //PERMISO ID 28  activar vale cerrado
+            $numero_permiso = 28;
+            $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $vale_id, 1);
+            // SI NO TIENE PERMISO
+
+
+            if ($v_permiso == false) {
+                $alerta = [
+                    "tipo" => "simpleRedireccion",
+                    "titulo" => "Error de permisos",
+                    "texto" => "Necesitas el permiso # " . $numero_permiso,
+                    "icono" => "error",
+                    "url" => BASE_URL . 'vales'
+                ];
+                return json_encode($alerta); // Terminar ejecución con alerta de error
+
+            }
+            // FIN DE PERMISO
             $datos = [
                 'estado' => 1,
                 'usuario_u' => usuario_session()
@@ -291,6 +442,27 @@ class ValesController
         $placa = $vehiculo[0]["placa"];
         $km_actual = $vehiculo[0]["km_actual"];
 
+              // INICIO DE PERMISO
+              $permiso = new PermisoController();
+              //PERMISO ID 31  INGRESAR DETALLES DE VALE
+              $numero_permiso = 31;
+              $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $vale_id, 1);
+              // SI NO TIENE PERMISO
+      
+      
+              if ($v_permiso == false) {
+                  $alerta = [
+                      "tipo" => "simpleRedireccion",
+                      "titulo" => "Error de permisos",
+                      "texto" => "Necesitas el permiso # " . $numero_permiso,
+                      "icono" => "error",
+                      "url" => BASE_URL . 'vales'
+                  ];
+                  return json_encode($alerta); // Terminar ejecución con alerta de error
+      
+              }
+              // FIN DE PERMISO
+
         if ($km_actual > $kilometraje) {
             $alerta = [
                 "tipo" => "simple",
@@ -358,7 +530,7 @@ class ValesController
         if (isset($_FILES['fotografia']) && $_FILES['fotografia']["name"] != "") {
 
             $uploadDir = BASE_URL_ARCHIVOS;
-            $newFileName = $fecha . "_" . $placa . "_" . $numero ."_".$tipo_gasto. "_img_." . $fileExtension;
+            $newFileName = $fecha . "_" . $placa . "_" . $numero . "_" . $tipo_gasto . "_img_." . $fileExtension;
             $uploadPath = $uploadDir . $newFileName;
 
             if (move_uploaded_file($_FILES['fotografia']['tmp_name'], $uploadPath)) {
@@ -398,13 +570,13 @@ class ValesController
 
 
         if ($resultado > 0) {
-           
+
             $alerta = [
                 "tipo" => "simpleRedireccion",
                 "titulo" => "Detalle de vale",
                 "texto" => "se ingreso el detalle de vale correctamente.",
                 "icono" => "success",
-                "url" => BASE_URL . 'ingresoVale?d=' . base64_encode($vale_id).'&n=n'
+                "url" => BASE_URL . 'ingresoVale?d=' . base64_encode($vale_id) . '&n=n'
             ];
         } else {
             $alerta = [
@@ -442,8 +614,8 @@ class ValesController
             return json_encode($alerta); // Retornar alerta en formato JSON
         }
 
-        $VehiculoController = new VehiculoController();           
-        
+        $VehiculoController = new VehiculoController();
+
 
         $condiciones = [
             "vale_detalle_id" => $vale_detalle_id
@@ -459,14 +631,14 @@ class ValesController
 
                     }
                 }
-            }           
+            }
 
             $alerta = [
                 "tipo" => "simpleRedireccion",
                 "titulo" => "vale modificado",
                 "texto" => "El detalle se borro",
                 "icono" => "success",
-                "url" => BASE_URL . 'ingresoVale?d=' . base64_encode($vale_id).'&n=n'
+                "url" => BASE_URL . 'ingresoVale?d=' . base64_encode($vale_id) . '&n=n'
             ];
             return json_encode($alerta); // Retornar alerta en formato JSON    
 
@@ -485,26 +657,28 @@ class ValesController
         }
     }
 
-    public function borrarTodosLosDetalles($vale_id){
-        $filtro=[
-            "vale_id"=> $vale_id
+    public function borrarTodosLosDetalles($vale_id)
+    {
+        $filtro = [
+            "vale_id" => $vale_id
         ];
-     $detalles_vale = $this->MainModel->consultar('vale_detalle',$filtro);
+        $detalles_vale = $this->MainModel->consultar('vale_detalle', $filtro);
 
-     foreach ($detalles_vale as $detalle) {
-        $this->borrarDetalleVale($detalle["vale_detalle_id"]);
-     }
-      
+        foreach ($detalles_vale as $detalle) {
+            $this->borrarDetalleVale($detalle["vale_detalle_id"]);
+        }
+
     }
-    public function TablaResumenVale($vale_id){
+    public function TablaResumenVale($vale_id)
+    {
 
         return $this->MainModel->TablaResumenVale($vale_id);
-        
+
     }
 
     public function moverDetallesVale()
     {
-        if (empty($_POST['numero'])|| empty($_POST['nuevovale']) || $_POST['nuevovale']<1 ||empty($_POST['vale_id'])) {
+        if (empty($_POST['numero']) || empty($_POST['nuevovale']) || $_POST['nuevovale'] < 1 || empty($_POST['vale_id'])) {
 
             $alerta = [
                 "tipo" => "simple",
@@ -517,48 +691,49 @@ class ValesController
         $viejovaleid = $_POST['vale_id'];
         $nuevovaleid = $_POST['nuevovale'];
 
-        $datos=[
-            "vale_id"=> $nuevovaleid
+        $datos = [
+            "vale_id" => $nuevovaleid
         ];
-        $filtro=[
-            "vale_id"=> $viejovaleid
-        ];
-
-       $resultado= $this->MainModel->actualizar("vale_detalle",$datos,$filtro);
-       if ($resultado > 0) {
-        $alerta = [
-            "tipo" => "simpleRedireccion",
-            "titulo" => "vale modificado",
-            "texto" => "Los detalles se movieron",
-            "icono" => "success",
-            "url" => BASE_URL . 'valesDetalle2'
+        $filtro = [
+            "vale_id" => $viejovaleid
         ];
 
-    } else {
-        $alerta = [
-            "tipo" => "simpleRedireccion",
-            "titulo" => "Ocurrio un error",
-            "texto" => "No se pudo modificar el vale, intente nuevamente.",
-            "icono" => "error",
-            "url" => BASE_URL . 'valesDetalle2'
-        ];
+        $resultado = $this->MainModel->actualizar("vale_detalle", $datos, $filtro);
+        if ($resultado > 0) {
+            $alerta = [
+                "tipo" => "simpleRedireccion",
+                "titulo" => "vale modificado",
+                "texto" => "Los detalles se movieron",
+                "icono" => "success",
+                "url" => BASE_URL . 'valesDetalle2'
+            ];
+
+        } else {
+            $alerta = [
+                "tipo" => "simpleRedireccion",
+                "titulo" => "Ocurrio un error",
+                "texto" => "No se pudo modificar el vale, intente nuevamente.",
+                "icono" => "error",
+                "url" => BASE_URL . 'valesDetalle2'
+            ];
+        }
+        return json_encode($alerta); // Retornar alerta en formato JSON 
+
     }
-    return json_encode($alerta); // Retornar alerta en formato JSON 
-    
-    }
-    
-    public function enviarValeCorreo(){
+
+    public function enviarValeCorreo()
+    {
         $controller = new MainController();
         $respuesta = $controller->enviarCorreo(
-    'llovos@surtimarcas.com.sv',
-    'Notificacion Importante ',
-    '
+            'llovos@surtimarcas.com.sv',
+            'Notificacion Importante ',
+            '
     <h3>Este es un mensaje de prueba.</h3>
     
     
     '
-               );
-      return ($respuesta);
+        );
+        return ($respuesta);
 
     }
 

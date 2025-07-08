@@ -5,7 +5,7 @@
     <h2>Inicia sesión</h2>
 
     <!-- Formulario de login -->
-    <form action="<?= BASE_URL . '/src/Views/ajax/loginRespuesta.php' ?>" method="POST">
+    <form action="<?= BASE_URL . 'src/Views/ajax/loginRespuesta.php' ?>" method="POST">
         <div class="form-group">
             <label for="username">Nombre de usuario</label>
             <input type="text" id="username" name="username" required placeholder="Escribe tu nombre de usuario">

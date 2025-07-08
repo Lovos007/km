@@ -18,29 +18,63 @@ final class ResponsablesController
         $conexion = (new Database())->getConnection();
         $this->MainModel = new MainModel($conexion);
     }
-    public function getResponsables($search = '')
-    {
-        if ($search == '') {
-            // Si se encontró el perfiles, lo devuelve, de lo contrario, retorna un array vacío.
-            $responsables = $this->MainModel->consultar('responsables');
-            return $responsables ? $responsables : [];
+    // public function getResponsables($search = '')
+    // {
+    //     if ($search == '') {
+    //         // Si se encontró el perfiles, lo devuelve, de lo contrario, retorna un array vacío.
+    //         $responsables = $this->MainModel->consultar('responsables');
+    //         return $responsables ? $responsables : [];
 
-        } else {
-            $datos =
-                [
-                    'nombre' => '%' . $search . '%',
-                    'cargo' => '%' . $search . '%',
-                    'empresa' => '%' . $search . '%'
+    //     } else {
+    //         $datos =
+    //             [
+    //                 'nombre' => '%' . $search . '%',
+    //                 'cargo' => '%' . $search . '%',
+    //                 'empresa' => '%' . $search . '%'
 
-                ];
-            $datos = $this->MainModel->limpiarArray($datos);
+    //             ];
+    //         $datos = $this->MainModel->limpiarArray($datos);
 
-            $responsables = $this->MainModel->consultar('responsables', $datos, " OR ");
-            return $responsables ? $responsables : [];
+    //         $responsables = $this->MainModel->consultar('responsables', $datos, " OR ");
+    //         return $responsables ? $responsables : [];
 
-        }
+    //     }
 
+    // }
+
+    public function getResponsables($search = '', $filtro = [], $pagina = 1, $registrosPorPagina = 10)
+{
+    // Calcular el offset para la paginación
+    $offset = ($pagina - 1) * $registrosPorPagina;
+    $limit = "LIMIT $offset, $registrosPorPagina";
+
+    if ($search === '') {
+        // Si no hay búsqueda, filtra solo por las condiciones adicionales.
+        $responsables = $this->MainModel->consultar('responsables', $filtro, " AND ", '', $limit);
+        $totalRegistros = $this->MainModel->contarRegistros('responsables', $filtro);
+    } else {
+        // Prepara los datos para la búsqueda con operadores LIKE
+        $datos = [
+            'nombre' => '%' . $search . '%',
+            'cargo' => '%' . $search . '%',
+            'empresa' => '%' . $search . '%'
+        ];
+
+        // Limpia el array de datos
+        $datos = $this->MainModel->limpiarArray($datos);
+
+        // Realiza la consulta con el operador OR y paginación
+        $responsables = $this->MainModel->consultar('responsables', $datos, " OR ", '', $limit);
+        $totalRegistros = $this->MainModel->contarRegistros('responsables', $datos, " OR ");
     }
+
+    // Retorna los resultados y el total de registros
+    return [
+        'resultados' => $responsables ?: [],
+        'totalRegistros' => $totalRegistros
+    ];
+}
+
     public function getResponsable($responsable_id)
     {
         return $responsable = $this->MainModel->consultar(
@@ -90,26 +124,26 @@ final class ResponsablesController
         $datos = $this->MainModel->limpiarArray($datos);
 
 
-  // INICIO DE PERMISO
-  $permiso = new PermisoController();
-  //PERMISO ID 21  modificar estado del vehiculo
-  $numero_permiso = 21;
-  $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $dui, 1);
-  // SI NO TIENE PERMISO
- 
- 
-  if ($v_permiso == false) {
-     $alerta = [
-         "tipo" => "simpleRedireccion",
-         "titulo" => "Error de permisos",
-         "texto" => "Necesitas el permiso # " . $numero_permiso,
-         "icono" => "error",
-         "url" => BASE_URL . 'home'
-     ];
-     return json_encode($alerta); // Terminar ejecución con alerta de error
- 
- }
- // FIN DE PERMISO
+        // INICIO DE PERMISO
+        $permiso = new PermisoController();
+        //PERMISO ID 21  modificar estado del vehiculo
+        $numero_permiso = 21;
+        $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $dui, 1);
+        // SI NO TIENE PERMISO
+
+
+        if ($v_permiso == false) {
+            $alerta = [
+                "tipo" => "simpleRedireccion",
+                "titulo" => "Error de permisos",
+                "texto" => "Necesitas el permiso # " . $numero_permiso,
+                "icono" => "error",
+                "url" => BASE_URL . 'home'
+            ];
+            return json_encode($alerta); // Terminar ejecución con alerta de error
+
+        }
+        // FIN DE PERMISO
         // Insertar en la base de datos
         $resultado = $this->MainModel->insertar("responsables", $datos);
 
@@ -132,11 +166,14 @@ final class ResponsablesController
         return json_encode($alerta);
     }
 
+    // MODIFICAR RESPONSABLE
+
     public function modificarEstadoResponsable($responsable_id)
     {
         $responsable = $this->getResponsable($responsable_id);
 
         $estado = $responsable[0]['estado'];
+        $dui = $responsable[0]['dui'];
 
         $tabla = 'responsables';
 
@@ -148,6 +185,27 @@ final class ResponsablesController
                 'usuario_u' => usuario_session()
             ];
             $datos = $this->MainModel->limpiarArray($datos);
+
+            // INICIO DE PERMISO
+            $permiso = new PermisoController();
+            //PERMISO ID 23  modificar estado responsable
+            $numero_permiso = 23;
+            $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $dui, 1);
+            // SI NO TIENE PERMISO
+
+
+            if ($v_permiso == false) {
+                $alerta = [
+                    "tipo" => "simpleRedireccion",
+                    "titulo" => "Error de permisos",
+                    "texto" => "Necesitas el permiso # " . $numero_permiso,
+                    "icono" => "error",
+                    "url" => BASE_URL . 'home'
+                ];
+                return json_encode($alerta); // Terminar ejecución con alerta de error
+
+            }
+            // FIN DE PERMISO
 
             $resultado = $this->MainModel->actualizar($tabla, $datos, $filtro);
             if ($resultado > 0) {
@@ -202,7 +260,7 @@ final class ResponsablesController
 
 
 
-
+    // modificar responsable
     public function modificarResponsable()
     {
         if (empty($_POST['nombre']) || empty($_POST['apellido']) || empty($_POST['dui']) || empty($_POST['empresa']) || empty($_POST['responsable_id'])) {
@@ -242,6 +300,30 @@ final class ResponsablesController
             'estado' => $estado,
             'usuario_u' => $usuario_u
         ];
+        // INICIO DE PERMISO
+        $permiso = new PermisoController();
+        //PERMISO ID 22  modificar responsable
+        $numero_permiso = 22;
+        $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $dui, 1);
+        // SI NO TIENE PERMISO
+
+
+        if ($v_permiso == false) {
+            $alerta = [
+                "tipo" => "simpleRedireccion",
+                "titulo" => "Error de permisos",
+                "texto" => "Necesitas el permiso # " . $numero_permiso,
+                "icono" => "error",
+                "url" => BASE_URL . 'home'
+            ];
+            return json_encode($alerta); // Terminar ejecución con alerta de error
+
+        }
+        // FIN DE PERMISO
+
+
+
+
         $datos = $this->MainModel->limpiarArray($datos);
         $filtro = ['responsable_id' => $responsable_id];
 

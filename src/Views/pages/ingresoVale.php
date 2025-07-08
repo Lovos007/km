@@ -15,6 +15,7 @@ use App\Controllers\ValesController;
 
     $vale = $vale->getVale($vale_id);
     $lista = $vales->getDetallesVale($vale_id);
+    $resumen =$vales->TablaResumenVale($vale_id);
     $total = 0;
     $numero = $vale[0]["numero"];
     $serie = $vale[0]["serie"];
@@ -166,9 +167,47 @@ use App\Controllers\ValesController;
 
                         <?php endif; ?>
                     </tbody>
-                </table>
+                </table>               
 
             </div>
+
+            <table>
+            <thead>
+                <tr>
+                    <th colspan="4" style="text-align: center;">
+                        Resumen de vale: <?= $numero ?>
+                    </th>
+                </tr>
+                <tr>
+                    <th style="text-align: center;">Cantidad</th>
+                    <th style="text-align: center;">Tipo de gasto</th>                    
+                    <th style="text-align: center;">Precio de unitario</th>
+                    <th style="text-align: center;">Monto</th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php if (empty($lista)): ?>
+                    <tr>
+                        <td data-label="" colspan="8" style="text-align: center;">No hay detalles aun</td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach ($resumen as $tipo): ?>
+                        <tr>
+                            <td style="text-align: center;" data-label="Cantidad"><?= $tipo["cantidad"] ?></td>
+                            <td style="text-align: center;" data-label="Tipo de gasto"><?= $tipo["tipo_gasto"] ?></td>                           
+                            <td style="text-align: center;" data-label="precio unitario"><?= number_format($tipo["precio_unitario"],2) ?></td>
+                            <td style="text-align: center;" data-label="Total"><?= number_format($tipo["monto"],2) ?></td>
+                        </tr>
+                        
+                    <?php endforeach; ?>
+               
+                <?php endif; ?>
+            </tbody>
+        </table>
+
+    </div>
+    </form>
+    </div>
         </form>
     </div>
 

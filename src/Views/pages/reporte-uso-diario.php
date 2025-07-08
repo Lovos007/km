@@ -1,3 +1,28 @@
+<?php 
+use App\Controllers\PermisoController;
+      // INICIO DE PERMISO
+      $permiso = new PermisoController();
+      //PERMISO ID 33  REPORTE DE USO DIARIO
+      $numero_permiso = 33;
+      $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso,"");
+      // SI NO TIENE PERMISO
+
+
+      if ($v_permiso == false) {
+          $alerta = [
+              "tipo" => "simpleRedireccion",
+              "titulo" => "Error de permisos",
+              "texto" => "Necesitas el permiso # " . $numero_permiso,
+              "icono" => "error",
+              "url" => BASE_URL . 'home'
+          ];
+          return json_encode($alerta); // Terminar ejecución con alerta de error
+
+      }
+      // FIN DE PERMISO
+
+?>
+
 <div style="text-align: center;">
     <form action="reporte-u-d" target="_blank" method="post">
         <input type="hidden">

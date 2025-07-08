@@ -3,6 +3,7 @@
 namespace App\Controllers;
 use App\Models\Database;
 use App\Models\MainModel;
+use App\Controllers\PermisoController;
 use App\Controllers\VehiculoController;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -20,32 +21,66 @@ class UsoDiarioController
         $this->MainModel = new MainModel($conexion);
     }
 
-    public function getUsos($search = '')
-    {
+    // public function getUsos($search = '')
+    // {
 
-        if ($search == '') {
-            $datos =
-                [
-                    "fecha_uso" => FECHA_ACTUAL_CORTA
-                ];
+    //     if ($search == '') {
+    //         $datos =
+    //             [
+    //                 "fecha_uso" => FECHA_ACTUAL_CORTA
+    //             ];
 
-            $vales = $this->MainModel->consultar('km', $datos, " AND ", " ORDER BY fecha_uso desc");
-            return $vales ? $vales : [];
+    //         $vales = $this->MainModel->consultar('km', $datos, " AND ", " ORDER BY fecha_uso desc");
+    //         return $vales ? $vales : [];
 
-        } else {
+    //     } else {
 
 
-            $datos =
-                [
-                    'id_conductor' => '%' . $search . '%',
-                    'id_vehiculo' => '%' . $search . '%'
-                ];
-            $datos = $this->MainModel->limpiarArray($datos);
-            $vales = $this->MainModel->consultar('km', $datos, " OR ");
-            return $vales ? $vales : [];
+    //         $datos =
+    //             [
+    //                 'id_conductor' => '%' . $search . '%',
+    //                 'id_vehiculo' => '%' . $search . '%'
+    //             ];
+    //         $datos = $this->MainModel->limpiarArray($datos);
+    //         $vales = $this->MainModel->consultar('km', $datos, " OR ");
+    //         return $vales ? $vales : [];
 
-        }
+    //     }
+    // }
+    public function getUsos($search = '', $filtro = [], $pagina = 1, $registrosPorPagina = 10)
+{
+    // Calcular el offset para la paginación
+    $offset = ($pagina - 1) * $registrosPorPagina;
+    $limit = "LIMIT $offset, $registrosPorPagina";
+
+    if ($search === '') {
+        // Filtro por fecha actual y condiciones adicionales
+        $filtro["fecha_uso"] = FECHA_ACTUAL_CORTA;
+
+        $vales = $this->MainModel->consultar('km', $filtro, " AND ", " ORDER BY fecha_uso DESC", $limit);
+        $totalRegistros = $this->MainModel->contarRegistros('km', $filtro);
+    } else {
+        // Prepara los datos para la búsqueda con operadores LIKE
+        $datos = [
+            'id_conductor' => '%' . $search . '%',
+            'id_vehiculo' => '%' . $search . '%'
+        ];
+
+        // Limpia el array de datos
+        $datos = $this->MainModel->limpiarArray($datos);
+
+        // Realiza la consulta con el operador OR y paginación
+        $vales = $this->MainModel->consultar('km', $datos, " OR ", " ORDER BY fecha_uso DESC", $limit);
+        $totalRegistros = $this->MainModel->contarRegistros('km', $datos, " OR ");
     }
+
+    // Retorna los resultados y el total de registros
+    return [
+        'resultados' => $vales ?: [],
+        'totalRegistros' => $totalRegistros
+    ];
+}
+
     public function getUso($km_id)
     {
         return $vale = $this->MainModel->consultar('km', ['km_id' => $km_id]);
@@ -85,6 +120,27 @@ class UsoDiarioController
         $vehiculo = $VehiculoController->getVehiculo($vehiculo_id);
         $km_actual = $vehiculo[0]["km_actual"];
         $km_anterior = $vehiculo[0]["km_anterior"];
+
+        // INICIO DE PERMISO
+        $permiso = new PermisoController();
+        //PERMISO ID 24  modificar responsable
+        $numero_permiso = 24;
+        $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $vehiculo_id, 1);
+        // SI NO TIENE PERMISO
+
+
+        if ($v_permiso == false) {
+            $alerta = [
+                "tipo" => "simpleRedireccion",
+                "titulo" => "Error de permisos",
+                "texto" => "Necesitas el permiso # " . $numero_permiso,
+                "icono" => "error",
+                "url" => BASE_URL . 'uso-diario'
+            ];
+            return json_encode($alerta); // Terminar ejecución con alerta de error
+
+        }
+        // FIN DE PERMISO
 
         if ($kilometraje < $km_actual) {
 
@@ -191,6 +247,27 @@ class UsoDiarioController
             "vehiculo_id" => $vehiculo_id,
            
         ];
+
+        // INICIO DE PERMISO
+        $permiso = new PermisoController();
+        //PERMISO ID 25  borar uso diario
+        $numero_permiso = 25;
+        $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $vehiculo_id, 1);
+        // SI NO TIENE PERMISO
+
+
+        if ($v_permiso == false) {
+            $alerta = [
+                "tipo" => "simpleRedireccion",
+                "titulo" => "Error de permisos",
+                "texto" => "Necesitas el permiso # " . $numero_permiso,
+                "icono" => "error",
+                "url" => BASE_URL . 'uso-diario'
+            ];
+            return json_encode($alerta); // Terminar ejecución con alerta de error
+
+        }
+        // FIN DE PERMISO
         $resultado = $this->MainModel->actualizar("vehiculos", $datos, $filtro);
 
         if ($resultado > 0) {
@@ -390,6 +467,28 @@ class UsoDiarioController
 
     public function FinalizarUso($km_id)
     {
+
+
+        // INICIO DE PERMISO
+        $permiso = new PermisoController();
+        //PERMISO ID 26  modificar responsable
+        $numero_permiso = 26;
+        $v_permiso = $permiso->getPermiso(usuario_session(), $numero_permiso, $km_id, 1);
+        // SI NO TIENE PERMISO
+
+
+        if ($v_permiso == false) {
+            $alerta = [
+                "tipo" => "simpleRedireccion",
+                "titulo" => "Error de permisos",
+                "texto" => "Necesitas el permiso # " . $numero_permiso,
+                "icono" => "error",
+                "url" => BASE_URL . 'uso-diario'
+            ];
+            return json_encode($alerta); // Terminar ejecución con alerta de error
+
+        }
+        // FIN DE PERMISO
         $resultado = $this->MainModel-> actualizar('km',['finalizado' => 1],['km_id' => $km_id]);
 
         if ($resultado > 0) {

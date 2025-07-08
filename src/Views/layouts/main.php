@@ -37,7 +37,8 @@
             <li>
                 <a href="#">Reporteria</a>
                 <ul>
-                    <li><a href="<?= BASE_URL . 'reporte-uso-diario' ?>">Uso diario</a></li>                    
+                    <li><a href="<?= BASE_URL . 'reporte-uso-diario' ?>">Uso diario</a></li>
+                    <li><a href="<?= BASE_URL . 'reporte-consumo' ?>">Consumo combustible</a></li>                    
                 </ul>
             </li>
             <li>

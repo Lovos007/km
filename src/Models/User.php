@@ -137,7 +137,7 @@ class User
         } catch (PDOException $e) {
             // Manejo de errores: registro en logs o mostrar un mensaje personalizado
             error_log("Error al insertar en la bitácora: " . $e->getMessage());
-            throw new Exception("No se pudo registrar la operación en la bitácora.");
+            throw new Exception("No se pudo registrar la operación en la bitácora.".$e->getMessage());
         }
     
     }

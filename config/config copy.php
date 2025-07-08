@@ -8,9 +8,9 @@ use App\Controllers\VehiculoController;
 use App\Controllers\ConductoresController;
 
 
-define('BASE_URL', '//localhost/km/');
+define('BASE_URL', 'https://cardaya.com/km/');
 
-define('BASE_URL_VISTA', '//localhost/');
+define('BASE_URL_VISTA', 'http://cardaya.com/');
 define('BASE_URL_ARCHIVOS', __DIR__ . '/../src/Views/detalle_vales/');
 define('BASE_URL_ARCHIVOS_LICENCIAS', __DIR__ . '/../src/Views/licencias/');
 define('BASE_URL_ARCHIVOS_TARGETAS', __DIR__ . '/../src/Views/targetas_circulacion/');

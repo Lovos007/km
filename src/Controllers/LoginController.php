@@ -55,9 +55,11 @@ class LoginController
             if ($user) {
                 // Si la autenticación es correcta, guardar el ID del usuario en sesión
                 $_SESSION['user_id'] = $user['usuario_id'];
-                echo $_SESSION['user_id'];
+                //echo $_SESSION['user_id'];
+               // echo 'Location:'.BASE_URL.'home';
                 // Redirigir a la página principal
                 header('Location:'.BASE_URL.'home');
+                
                 
             } else {
                 // Si las credenciales son incorrectas, mostrar un mensaje de error
